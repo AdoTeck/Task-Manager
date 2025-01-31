@@ -1,4 +1,5 @@
-import { LayoutDashboard, Clock, CheckSquare, FileText, Settings } from "lucide-react"
+import Link from "next/link"
+import { LayoutDashboard, Clock, CheckSquare, FileText, Settings, File } from "lucide-react"
 
 interface SidebarProps {
   isOpen: boolean
@@ -6,11 +7,12 @@ interface SidebarProps {
 
 export default function Sidebar({ isOpen }: SidebarProps) {
   const menuItems = [
-    { icon: LayoutDashboard, text: "Dashboard" },
-    { icon: Clock, text: "Time Sheet" },
-    { icon: CheckSquare, text: "Todo" },
-    { icon: FileText, text: "Report" },
-    { icon: Settings, text: "Settings" },
+    { icon: LayoutDashboard, text: "Dashboard", href: "/dashboard" },
+    { icon: File, text: "Projects", href: "/dashboard/projects" },
+    { icon: Clock, text: "Time Sheet", href: "/dashboard/time-sheet" },
+    { icon: CheckSquare, text: "Todo", href: "/dashboard/todo" },
+    { icon: FileText, text: "Report", href: "/dashboard/reports" },
+    { icon: Settings, text: "Settings", href: "/settings" },
   ]
 
   return (
@@ -21,13 +23,13 @@ export default function Sidebar({ isOpen }: SidebarProps) {
         <ul className="space-y-2">
           {menuItems.map((item, index) => (
             <li key={index}>
-              <a
-                href="#"
+              <Link
+                href={item.href}
                 className="flex items-center text-gray-700 hover:bg-yellow-100 rounded-lg p-2 transition-colors duration-200"
               >
                 <item.icon className="h-6 w-6 text-yellow-500 mr-3" />
                 <span>{item.text}</span>
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -35,4 +37,3 @@ export default function Sidebar({ isOpen }: SidebarProps) {
     </aside>
   )
 }
-

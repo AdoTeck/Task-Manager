@@ -3,13 +3,11 @@
 import { useState, useEffect } from "react"
 import { Clock, FolderOpen, CheckCircle, Plus } from "lucide-react"
 import MetricCard from "../../components/MetricCard"
-import Navbar from "../../components/Navbar"
-import Sidebar from "../../components/Sidebar"
 import CreateProjectModal from "../../components/CreateProjectModal"
 // import ErrorBoundary from "../../components/ErrorBoundary"
 
 export default function Dashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+
   const [isModalOpen, setIsModalOpen] = useState(false)
 //   const [error, setError] = useState<Error | null>(null)
 
@@ -17,20 +15,15 @@ export default function Dashboard() {
     console.log("Dashboard component mounted")
   }, [])
 
-  const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen)
-  }
+ 
 
 //   if (error) {
 //     return <div>Error: {error.message}</div>
-//   }
+//   }  
 
   return (
     // <ErrorBoundary>
-      <div className="flex flex-col h-screen bg-[#ECECEC]">
-        <Navbar toggleSidebar={toggleSidebar} />
-        <div className="flex flex-1 relative">
-          <Sidebar isOpen={sidebarOpen} />
+    <>
           <main className="flex-1 p-4 overflow-y-auto">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
               <h1 className="text-2xl font-semibold text-gray-800 mb-8">Dashboard</h1>
@@ -82,16 +75,10 @@ export default function Dashboard() {
               </div>
             </div>
           </main>
-        </div>
 
         {/* Create Project Modal */}
         <CreateProjectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-
-        {/* Overlay for mobile when sidebar is open */}
-        {sidebarOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 z-20 lg:hidden" onClick={toggleSidebar}></div>
-        )}
-      </div>
+</>
     // </ErrorBoundary>
   )
 }
