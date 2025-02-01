@@ -5,6 +5,7 @@ import cors from 'cors';
 
 // import { router as taskRoutes } from './src/routes/taskRoutes';
 import authRoutes from './src/routes/authRoutes';
+import projects from './src/routes/projectRoutes';
 import { errorHandler } from './src/utils/errorHandler';
 import { config } from "./src/config/env";
 
@@ -21,6 +22,7 @@ app.use(cors({
 connectToDatabase();
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/projects", projects)
 
 // Error handling middleware
 app.use(errorHandler);

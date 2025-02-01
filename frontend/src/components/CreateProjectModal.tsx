@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { X } from "lucide-react"
 import { useRouter } from "next/navigation"
+import axios from "axios"
 
 interface CreateProjectModalProps {
   isOpen: boolean
@@ -14,15 +15,27 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
     description: "",
     dueDate: "",
     priority: "medium",
+    status: "In Progress",
     category: "",
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Here you can add logic to save the project data
-    console.log("Project Data:", formData)
-    // Redirect to TaskBar route
-    router.push("/taskbar")
+    try {
+      const response = await axios.post("http://localhost:5000/projects/create", {
+        ProjectTitle: formData.title,
+        ProjectDescription: formData.description,
+        DueDate: formData.dueDate,
+        PriorityLevel: formData.priority,
+        Status: formData.status,
+        Category: formData.category,
+        User: "679bc122e9c6cc7d4c96e0eb" // Replace with actual user ID
+      })
+      console.log("Project Created:", response.data)
+      router.push("/tasks")
+    } catch (error) {
+      console.error("Error creating project:", error)
+    }
   }
 
   if (!isOpen) return null
@@ -82,7 +95,18 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
               <option value="high">High</option>
             </select>
           </div>
-
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+            >
+              <option value="Completed">Completed</option>
+              <option value="In Progress">In Progress</option>
+              <option value="In Review">In Review</option>
+            </select>
+          </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Category/Tags</label>
             <input
