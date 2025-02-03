@@ -7,7 +7,8 @@ import cors from 'cors';
 import authRoutes from './src/routes/authRoutes';
 import projects from './src/routes/projectRoutes';
 import { errorHandler } from './src/utils/errorHandler';
-import { config } from "./src/config/env";
+import cookieParser from 'cookie-parser';
+import { corsOptions } from './src/config/cors';
 
 dotenv.config();
 
@@ -15,10 +16,8 @@ const app: Express = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors({
-    origin: config.CLIENT_URL, // Your frontend URL
-    credentials: true // Allow cookies
-  }));
+app.use(cookieParser());
+app.use(cors(corsOptions));
 connectToDatabase();
 // Routes
 app.use("/api/auth", authRoutes);

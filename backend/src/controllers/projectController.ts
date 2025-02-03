@@ -1,10 +1,12 @@
 import { Request, Response } from "express";
 import { CreateProject } from "../services/projectService";
+import { console } from "inspector";
 
 export const createProject = async (req: Request, res: Response) => {
   try {
     // Validate required fields
     const { ProjectTitle, ProjectDescription, DueDate } = req.body;
+    console.log(req.body)
     
     if (!ProjectTitle || !ProjectDescription || !DueDate) {
       return res.status(400).json({ 
