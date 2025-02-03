@@ -22,8 +22,12 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
+      const token = localStorage.getItem('token'); // Retrieve token from localStorage
+      if (!token) {
+        throw new Error('No token found');
+      }
       const response = await axios.post(
-        "http://localhost:5000/projects/create", 
+        "http://localhost:5000/api/projects/create", 
         {
           ProjectTitle: formData.title,
           ProjectDescription: formData.description,
@@ -35,7 +39,8 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
         {
           withCredentials: true, // Important for sending cookies
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` // Include token in Authorization header
           }
         }
       );

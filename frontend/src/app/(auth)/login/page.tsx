@@ -32,6 +32,8 @@ export default function LoginPage() {
         throw new Error(data.message || "Login failed");
       }
 
+      // Store token in localStorage
+      localStorage.setItem('token', data.token);
 
       // Redirect to dashboard or home page
       router.push("/dashboard");

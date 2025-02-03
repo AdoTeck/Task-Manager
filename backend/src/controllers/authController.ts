@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { registerUser,loginUser } from "../services/authService";
+import { registerUser, loginUser } from "../services/authService";
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -35,7 +35,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({
       message: 'Login successful',
-      ...responseData
+      ...responseData,
+      token // Include token in response body for frontend to store in localStorage
     });
   } catch (error) {
     res.status(401).json({ message: 'Login failed' });

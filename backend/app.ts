@@ -21,7 +21,7 @@ app.use(cors(corsOptions));
 connectToDatabase();
 // Routes
 app.use("/api/auth", authRoutes);
-app.use("/projects", projects)
+app.use("/api/projects", projects)
 
 // Error handling middleware
 app.use(errorHandler);

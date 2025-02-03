@@ -39,7 +39,7 @@ const ProjectSchema = new mongoose.Schema({
     default: 'In Progress'
   },
   Category: {
-    type: String,
+    type: [String], // Change to array of strings
     required: true
   }
 });

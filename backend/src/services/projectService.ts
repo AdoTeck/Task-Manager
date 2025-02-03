@@ -20,3 +20,12 @@ export const CreateProject = async (projectData: Partial<IProject>) => {
     throw new Error(`Failed to create project: ${error.message}`);
   }
 };
+
+export const GetProject = async () => {
+  try {
+    const projects = await Projects.find().select("ProjectTitle ProjectDescription DueDate");
+    return projects;
+  } catch (error: any) {
+    throw new Error(`Failed to fetch projects: ${error.message}`);
+  }
+};

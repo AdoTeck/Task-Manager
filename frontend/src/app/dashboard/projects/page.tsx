@@ -1,53 +1,36 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ChevronRight, Calendar, CheckCircle2, Clock } from "lucide-react"
 import Link from "next/link"
 
 interface Project {
-  id: number
-  title: string
-  description: string
-  dueDate: string
-  tasksCompleted: number
-  totalTasks: number
+  id: string
+  ProjectTitle: string
+  ProjectDescription: string
+  DueDate: string
 }
 
 export default function ProjectsList() {
-  const [projects, setProjects] = useState<Project[]>([
-    {
-      id: 1,
-      title: "Website Redesign",
-      description: "Overhaul the company website with a modern, responsive design",
-      dueDate: "2023-09-30",
-      tasksCompleted: 8,
-      totalTasks: 15,
-    },
-    {
-      id: 2,
-      title: "Mobile App Development",
-      description: "Create a cross-platform mobile app for task management",
-      dueDate: "2023-11-15",
-      tasksCompleted: 3,
-      totalTasks: 20,
-    },
-    {
-      id: 3,
-      title: "Data Analytics Dashboard",
-      description: "Develop a comprehensive analytics dashboard for business insights",
-      dueDate: "2023-10-31",
-      tasksCompleted: 5,
-      totalTasks: 12,
-    },
-  ])
+  const [projects, setProjects] = useState<Project[]>([])
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/projects/getProjects")
+        const data = await response.json()
+        setProjects(data)
+      } catch (error) {
+        console.error("Failed to fetch projects:", error)
+      }
+    }
+
+    fetchProjects()
+  }, [])
 
   const formatDate = (dateString: string) => {
     const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" }
     return new Date(dateString).toLocaleDateString(undefined, options)
-  }
-
-  const calculateProgress = (completed: number, total: number) => {
-    return Math.round((completed / total) * 100)
   }
 
   return (
@@ -63,8 +46,8 @@ export default function ProjectsList() {
             <div key={project.id} className="bg-white rounded-lg shadow-md p-6">
               <div className="flex justify-between items-start mb-4">
                 <div>
-                  <h2 className="text-2xl font-semibold text-primary">{project.title}</h2>
-                  <p className="text-muted-foreground mt-1">{project.description}</p>
+                  <h2 className="text-2xl font-semibold text-primary">{project.ProjectTitle}</h2>
+                  <p className="text-muted-foreground mt-1">{project.ProjectDescription}</p>
                 </div>
                 <Link
                   href={`/project/${project.id}`}
@@ -75,27 +58,7 @@ export default function ProjectsList() {
               </div>
               <div className="flex items-center text-sm text-muted-foreground mb-4">
                 <Calendar className="h-4 w-4 mr-2" />
-                <span>Due: {formatDate(project.dueDate)}</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <CheckCircle2 className="h-5 w-5 text-green-500 mr-2" />
-                  <span className="text-sm font-medium">
-                    {project.tasksCompleted} / {project.totalTasks} tasks completed
-                  </span>
-                </div>
-                <div className="flex items-center">
-                  <Clock className="h-5 w-5 text-yellow-500 mr-2" />
-                  <span className="text-sm font-medium">
-                    {calculateProgress(project.tasksCompleted, project.totalTasks)}% complete
-                  </span>
-                </div>
-              </div>
-              <div className="mt-4 bg-gray-200 rounded-full h-2.5">
-                <div
-                  className="bg-yellow-500 h-2.5 rounded-full"
-                  style={{ width: `${calculateProgress(project.tasksCompleted, project.totalTasks)}%` }}
-                ></div>
+                <span>Due: {formatDate(project.DueDate)}</span>
               </div>
             </div>
           ))}
