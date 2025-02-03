@@ -22,19 +22,35 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const response = await axios.post("http://localhost:5000/projects/create", {
-        ProjectTitle: formData.title,
-        ProjectDescription: formData.description,
-        DueDate: formData.dueDate,
-        PriorityLevel: formData.priority,
-        Status: formData.status,
-        Category: formData.category,
-        User: "679bc122e9c6cc7d4c96e0eb" // Replace with actual user ID
-      })
+      const response = await axios.post(
+        "http://localhost:5000/projects/create", 
+        {
+          ProjectTitle: formData.title,
+          ProjectDescription: formData.description,
+          DueDate: formData.dueDate,  // Remove toISOString() conversion
+          PriorityLevel: formData.priority,
+          Status: formData.status,
+          Category: formData.category.split(',').map(cat => cat.trim()) // Convert to array
+        },
+        {
+          withCredentials: true, // Important for sending cookies
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
       console.log("Project Created:", response.data)
+      onClose()
       router.push("/tasks")
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating project:", error)
+      if (error.response?.status === 401) {
+        alert("Please login to create a project")
+        router.push('/login')
+      } else {
+        alert("Failed to create project. Please check all fields and try again.")
+      }
     }
   }
 

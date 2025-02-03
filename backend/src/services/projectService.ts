@@ -1,18 +1,22 @@
 import { Projects, IProject } from "../models/Projects";
+import mongoose from "mongoose";
 
-export const CreateProject = async (ProjectData: IProject) => {
-  const { User, ProjectTitle, ProjectDescription, DueDate, PriorityLevel, Category, Status } = ProjectData;
+export const CreateProject = async (projectData: Partial<IProject>) => {
+  // Validate required fields
+  if (!projectData.User || !projectData.ProjectTitle || !projectData.ProjectDescription || !projectData.DueDate) {
+    throw new Error("Missing required fields: User, ProjectTitle, ProjectDescription, or DueDate");
+  }
 
-  const newProject = new Projects({
-    User,
-    ProjectTitle,
-    ProjectDescription,
-    DueDate,
-    PriorityLevel,
-    Category,
-    Status
-  });
+  try {
+    const newProject = new Projects({
+      ...projectData,
+      User: new mongoose.Types.ObjectId(projectData.User.toString()),
+      Category: Array.isArray(projectData.Category) ? projectData.Category : [projectData.Category].filter(Boolean)
+    });
 
-  await newProject.save();
-  return { id: newProject._id, userName: newProject.ProjectTitle, Category: newProject.Category, Status: newProject.Status };
+    const savedProject = await newProject.save();
+    return savedProject;
+  } catch (error: any) {
+    throw new Error(`Failed to create project: ${error.message}`);
+  }
 };
