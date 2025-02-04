@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { verifyToken } from '../utils/jwtUtils';
+import jwt from 'jsonwebtoken';
 
 declare global {
   namespace Express {
@@ -9,24 +9,18 @@ declare global {
   }
 }
 
-export const authenticateUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader?.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'Authorization header required' });
+    const token = req.cookies.token; // Get token from cookies
+
+    if (!token) {
+      throw new Error('No token provided');
     }
 
-    const token = authHeader.split(' ')[1];
-    const decoded = verifyToken(token);
-    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
     req.user = decoded;
     next();
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid or expired token' });
+    res.status(401).json({ error: 'Please authenticate' });
   }
 };
