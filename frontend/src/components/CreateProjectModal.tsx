@@ -2,6 +2,7 @@ import { useState } from "react"
 import { X } from "lucide-react"
 import { useRouter } from "next/navigation"
 import axios from "axios"
+import toast, { Toaster } from 'react-hot-toast';
 
 interface CreateProjectModalProps {
   isOpen: boolean
@@ -46,15 +47,16 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
       );
 
       console.log("Project Created:", response.data)
+      toast.success("Project Create Sucessfully")
       onClose()
       router.push("/tasks")
     } catch (error: any) {
       console.error("Error creating project:", error)
       if (error.response?.status === 401) {
-        alert("Please login to create a project")
+        toast.error("Please login to create a project")
         router.push('/login')
       } else {
-        alert("Failed to create project. Please check all fields and try again.")
+        toast.error("Failed to create project. Please check all fields and try again.")
       }
     }
   }
@@ -63,6 +65,10 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+      <Toaster
+  position="top-right"
+  reverseOrder={false}
+/>
       <div className="bg-white rounded-lg w-full max-w-md p-6 relative">
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
           <X className="h-6 w-6" />
