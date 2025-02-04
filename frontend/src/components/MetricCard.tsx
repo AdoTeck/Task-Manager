@@ -7,7 +7,7 @@ export default function MetricCard({
   className = "",
 }: {
   title: string
-  value: string
+  value: any
   icon: any
   className?: string
 }) {

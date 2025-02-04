@@ -12,6 +12,7 @@ export default function Sidebar({ isOpen }: SidebarProps) {
     { icon: Clock, text: "Time Sheet", href: "/dashboard/time-sheet" },
     { icon: CheckSquare, text: "Todo", href: "/dashboard/todo" },
     { icon: FileText, text: "Report", href: "/dashboard/reports" },
+    { icon: FileText, text: "Users", href: "/dashboard/users" },
     { icon: Settings, text: "Settings", href: "/settings" },
   ]
 

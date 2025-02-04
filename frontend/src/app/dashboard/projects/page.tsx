@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { ChevronRight, Calendar, AlertCircle } from "lucide-react"
 import Link from "next/link"
+import CreateProjectModal from "../../../components/CreateProjectModal"
 
 interface Project {
   _id: string
@@ -20,6 +21,7 @@ export default function ProjectsList() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -78,10 +80,10 @@ export default function ProjectsList() {
     )
   }
 
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" }
-    return new Date(dateString).toLocaleDateString(undefined, options)
-  }
+  // const formatDate = (dateString: string) => {
+  //   const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" }
+  //   return new Date(dateString).toLocaleDateString(undefined, options)
+  // }
 
   return (
     <div className="min-h-screen bg-[#e5e7eb] text-foreground p-4 md:p-8">
@@ -130,12 +132,15 @@ export default function ProjectsList() {
           ))}
         </div>
 
-        <div className="mt-8 text-center">
-          <Link href="/dashboard/projects/create" className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
+        <div className="mt-8 text-center" onClick={() => setIsModalOpen(true)}>
+          <Link href="/dashboard/projects" className="bg-yellow-500 hover:bg-yellow-600 text-black font-semibold px-6 py-2 rounded-full transition duration-300 ease-in-out transform hover:scale-105">
             Create New Project
           </Link>
         </div>
       </div>
+
+      {/* Create Project Modal */}
+              <CreateProjectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   )
 }

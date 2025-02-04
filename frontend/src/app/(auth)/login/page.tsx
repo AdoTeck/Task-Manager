@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -32,8 +33,14 @@ export default function LoginPage() {
         throw new Error(data.message || "Login failed");
       }
 
-      // Store token in localStorage
-      localStorage.setItem('token', data.token);
+      // // Store token in localStorage
+      // localStorage.setItem('token', data.token);
+      // Store token in cookies
+      Cookies.set('token', data.token, { expires: 7 });
+
+      // Log the token to verify
+      console.log("Token set in localStorage:", localStorage.getItem('token'));
+      console.log("Token set in Cookies:", Cookies.get('token'));
 
       // Redirect to dashboard or home page
       router.push("/dashboard");

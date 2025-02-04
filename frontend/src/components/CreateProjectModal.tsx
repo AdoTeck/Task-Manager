@@ -49,7 +49,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
       console.log("Project Created:", response.data)
       toast.success("Project Create Sucessfully")
       onClose()
-      router.push("/tasks")
+      router.push("/dashboard/projects")
     } catch (error: any) {
       console.error("Error creating project:", error)
       if (error.response?.status === 401) {
