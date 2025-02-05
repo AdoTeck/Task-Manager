@@ -21,45 +21,40 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      const token = localStorage.getItem('token'); // Retrieve token from localStorage
-      if (!token) {
-        throw new Error('No token found');
-      }
       const response = await axios.post(
-        "http://localhost:5000/api/projects/create", 
+        "http://localhost:5000/api/projects/create",
         {
           ProjectTitle: formData.title,
           ProjectDescription: formData.description,
-          DueDate: formData.dueDate,  // Remove toISOString() conversion
+          DueDate: formData.dueDate,
           PriorityLevel: formData.priority,
           Status: formData.status,
-          Category: formData.category.split(',').map(cat => cat.trim()) // Convert to array
+          Category: formData.category.split(',').map(cat => cat.trim()),
         },
         {
-          withCredentials: true, // Important for sending cookies
+          withCredentials: true, // Ensures HTTPOnly cookie is sent automatically
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}` // Include token in Authorization header
-          }
+            "Content-Type": "application/json",
+          },
         }
       );
-
-      console.log("Project Created:", response.data)
-      toast.success("Project Create Sucessfully")
-      onClose()
-      router.push("/dashboard/projects")
+  
+      console.log("Project Created:", response.data);
+      toast.success("Project Created Successfully");
+      onClose();
+      router.push("/dashboard/projects");
     } catch (error: any) {
-      console.error("Error creating project:", error)
+      console.error("Error creating project:", error);
       if (error.response?.status === 401) {
-        toast.error("Please login to create a project")
-        router.push('/login')
+        toast.error("Please login to create a project");
+        router.push('/login');
       } else {
-        toast.error("Failed to create project. Please check all fields and try again.")
+        toast.error("Failed to create project. Please check all fields and try again.");
       }
     }
-  }
+  };
 
   if (!isOpen) return null
 

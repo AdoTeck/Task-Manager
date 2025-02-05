@@ -22,15 +22,20 @@ export const authenticateUser = (
   next: NextFunction
 ): void => {
   try {
+    let token;
     const authHeader = req.headers.authorization;
     console.log('Authorization Header:', authHeader);
     
-    if (!authHeader?.startsWith('Bearer ')) {
-      console.error('Authorization header missing or does not start with Bearer');
-      return next(new Error('Authorization header required'));
+    if (authHeader?.startsWith('Bearer ')) {
+      token = authHeader.split(' ')[1];
+    } else if (req.cookies?.token) {
+      token = req.cookies.token;
+    } else {
+      console.error('Authorization header or token cookie missing');
+      res.status(401).json({ error: 'Authorization header or token cookie required' });
+      return 
     }
 
-    const token = authHeader.split(' ')[1];
     console.log('Token:', token);
     const decoded = verifyToken(token) as UserPayload;
     console.log('Decoded Token:', decoded);
@@ -41,12 +46,14 @@ export const authenticateUser = (
     if (error instanceof Error) {
       if (error.message === 'jwt expired') {
         console.error('Token verification failed: Token has expired');
-        return next(new Error('Token has expired'));
+        res.status(401).json({ error: 'Token has expired' });
+        return;
       }
       console.error('Token verification failed:', error.message);
     } else {
       console.error('Token verification failed:', error);
     }
-    next(new Error('Invalid or expired token'));
+    res.status(401).json({ error: 'Invalid or expired token' });
+    return;
   }
 };

@@ -37,9 +37,22 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
     }
   ])
 
-  const handleLogout = () => {
-    Cookies.remove("token", { path: "/" })
-    router.push("/login")
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        router.push("/login");
+      } else {
+        throw new Error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+      // You might want to show an error message to the user here
+    }
   }
 
   const getNotificationIcon = (type: string) => {
