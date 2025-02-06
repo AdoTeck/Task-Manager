@@ -1,12 +1,55 @@
 "use client"
-// src/app/profile/page.tsx
 import Link from "next/link";
 import { ChevronLeft, User, Mail, Lock, Bell, Upload, CheckCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function ProfilePage() {
   const [showSuccess, setShowSuccess] = useState(false);
-  
+  const [profile, setProfile] = useState({ fullName: "", email: "", totalProjects: 0 });
+  const fullNameRef = useRef<HTMLInputElement>(null);
+  const newPasswordRef = useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Fetch user profile details
+    fetch("http://localhost:5000/api/auth/profile", {
+      method: "GET",
+      credentials: "include", // Ensure cookies are sent with the request
+    })
+      .then(response => response.json())
+      .then(data => {
+        setProfile(data);
+      })
+      .catch(error => {
+        console.error("Error fetching profile:", error);
+      });
+  }, []);
+
+  const handleSaveChanges = () => {
+    const updatedProfile = {
+      fullName: fullNameRef.current?.value || profile.fullName,
+      password: newPasswordRef.current?.value,
+    };
+
+    fetch("http://localhost:5000/api/auth/profile", {
+      method: "PATCH",
+      credentials: "include", // Ensure cookies are sent with the request
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedProfile),
+    })
+      .then(response => {
+        if (response.ok) {
+          setShowSuccess(true);
+        } else {
+          throw new Error("Error updating profile");
+        }
+      })
+      .catch(error => {
+        console.error("Error updating profile:", error);
+      });
+  };
   // Demo password strength calculation
   const calculateStrength = (password: string) => {
     return Math.min(password.length * 10, 100);
@@ -49,10 +92,10 @@ export default function ProfilePage() {
                     <input type="file" className="hidden" />
                   </button>
                 </div>
-                <h2 className="text-xl font-semibold mt-4">John Doe</h2>
+                <h2 className="text-xl font-semibold mt-4">{profile.fullName}</h2>
                 <p className="text-muted-foreground flex items-center gap-2">
                   <Mail className="h-4 w-4" />
-                  john@taskmanager.com
+                  {profile.email}
                 </p>
               </div>
             </div>
@@ -66,7 +109,7 @@ export default function ProfilePage() {
               <div className="space-y-3">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Active Projects</span>
-                  <span className="font-medium">5</span>
+                  <span className="font-medium">{profile.totalProjects}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Completed Tasks</span>
@@ -92,7 +135,8 @@ export default function ProfilePage() {
                   </label>
                   <input
                     type="text"
-                    defaultValue="John Doe"
+                    defaultValue={profile.fullName}
+                    ref={fullNameRef}
                     className="w-full px-4 py-2.5 rounded-lg border border-input bg-card focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                   />
                 </div>
@@ -104,7 +148,7 @@ export default function ProfilePage() {
                   <div className="relative">
                     <input
                       type="email"
-                      defaultValue="john@taskmanager.com"
+                      value={profile.email}
                       disabled
                       className="w-full px-4 py-2.5 rounded-lg border border-input bg-card opacity-75 cursor-not-allowed pr-10"
                     />
@@ -126,6 +170,7 @@ export default function ProfilePage() {
                     <input
                       type="password"
                       placeholder="Enter new password"
+                      ref={newPasswordRef}
                       className="w-full px-4 py-2.5 rounded-lg border border-input bg-card focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all pr-10"
                     />
                     <Lock className="h-5 w-5 text-muted-foreground absolute right-3 top-3" />
@@ -133,7 +178,7 @@ export default function ProfilePage() {
                   <div className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-yellow-500 transition-all duration-300"
-                      style={{ width: `${calculateStrength("")}%` }}
+                      style={{ width: `${calculateStrength(newPasswordRef.current?.value || "")}%` }}
                     />
                   </div>
                 </div>
@@ -146,6 +191,7 @@ export default function ProfilePage() {
                     <input
                       type="password"
                       placeholder="Confirm new password"
+                      ref={confirmPasswordRef}
                       className="w-full px-4 py-2.5 rounded-lg border border-input bg-card focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all pr-10"
                     />
                     <Lock className="h-5 w-5 text-muted-foreground absolute right-3 top-3" />
@@ -212,7 +258,7 @@ export default function ProfilePage() {
             {/* Save Button */}
             <div className="flex justify-end">
               <button 
-                onClick={() => setShowSuccess(true)}
+                onClick={handleSaveChanges}
                 className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
               >
                 Save Changes

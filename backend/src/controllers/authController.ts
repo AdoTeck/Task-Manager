@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { registerUser, loginUser } from "../services/authService";
+import { registerUser, loginUser, getUserProfileService, updateUserProfileService } from "../services/authService";
 
 export const signup = async (req: Request, res: Response) => {
   try {
@@ -58,3 +58,23 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: 'Logout failed' });
   }
 };
+
+export const getUserProfile = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { user, totalProjects } = await getUserProfileService(req.user!.id);
+    res.status(200).json({ ...user.toObject(), totalProjects });
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+export const updateUserProfile = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { confirmPassword, ...updates } = req.body; // Exclude confirmPassword from updates
+    const user = await updateUserProfileService(req.user!.id, updates);
+    res.status(200).json(user);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+};
+

@@ -1,4 +1,5 @@
 import { User, IUser } from "../models/User";
+import { Projects } from "../models/Projects";
 import bcrypt from "bcrypt";
 import { generateToken } from '../utils/jwtUtils';
 
@@ -53,3 +54,22 @@ export const loginUser = async (email: string, password: string) => {
   };
 };
 
+export const getUserProfileService = async (userId: string) => {
+  const user = await User.findById(userId).select("fullName email");
+  if (!user) {
+    throw new Error("User not found");
+  }
+  const totalProjects = await Projects.countDocuments({ User: userId });
+  return { user, totalProjects };
+};
+
+export const updateUserProfileService = async (userId: string, updates: Partial<IUser>) => {
+  if (updates.password) {
+    updates.password = await bcrypt.hash(updates.password, 10);
+  }
+  const user = await User.findByIdAndUpdate(userId, updates, { new: true }).select("fullName email");
+  if (!user) {
+    throw new Error("User not found");
+  }
+  return user;
+};

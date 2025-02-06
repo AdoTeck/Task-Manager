@@ -1,6 +1,5 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import Cookies from "js-cookie" 
 import { Bell, Search, ChevronDown, User, Menu, CheckCircle, AlertTriangle, Info } from "lucide-react"
 
 interface NavbarProps {
