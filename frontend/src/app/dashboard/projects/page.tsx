@@ -24,18 +24,12 @@ export default function ProjectsList() {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const token = localStorage.getItem('token') // Get token from localStorage
-        if (!token) {
-          setError("Please login to view projects")
-          setLoading(false)
-          return
-        }
-
-        const response = await fetch("http://localhost:5000/api/projects/getProjects", {
+        const response = await fetch("http://localhost:5000/api/projects/getProjects", 
+        {
+          credentials: 'include', // Ensures HTTPOnly cookie is sent automatically
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+            "Content-Type": "application/json",
+          },
         })
 
         if (!response.ok) {

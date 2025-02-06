@@ -30,7 +30,7 @@ export default function TodoComponent() {
       <div className="mb-8">
         <h2 className="text-2xl font-bold flex items-center gap-2">
           <Check className="h-6 w-6 text-yellow-500" />
-          Task Manager
+          Task Manager Todo
         </h2>
         <p className="text-muted-foreground mt-2">
           {todos.filter(todo => !todo.completed).length} tasks remaining

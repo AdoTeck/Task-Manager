@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { X } from "lucide-react"
 import { useRouter } from "next/navigation"
-import axios from "axios"
 import toast, { Toaster } from 'react-hot-toast';
 
 interface CreateProjectModalProps {
@@ -23,25 +22,29 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/projects/create",
-        {
+      const response = await fetch("http://localhost:5000/api/projects/create", 
+      {
+        method: "POST",
+        credentials: 'include', // Ensures HTTPOnly cookie is sent automatically
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
           ProjectTitle: formData.title,
           ProjectDescription: formData.description,
           DueDate: formData.dueDate,
           PriorityLevel: formData.priority,
           Status: formData.status,
           Category: formData.category.split(',').map(cat => cat.trim()),
-        },
-        {
-          withCredentials: true, // Ensures HTTPOnly cookie is sent automatically
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-  
-      console.log("Project Created:", response.data);
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create project');
+      }
+
+      const result = await response.json();
+      console.log("Project Created:", result);
       toast.success("Project Created Successfully");
       onClose();
       router.push("/dashboard/projects");
@@ -60,10 +63,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <Toaster
-  position="top-right"
-  reverseOrder={false}
-/>
+      <Toaster position="top-right" reverseOrder={false} />
       <div className="bg-white rounded-lg w-full max-w-md p-6 relative">
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
           <X className="h-6 w-6" />

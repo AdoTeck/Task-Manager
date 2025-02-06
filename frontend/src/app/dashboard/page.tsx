@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { Clock, FolderOpen, CheckCircle, Plus } from "lucide-react"
 import MetricCard from "../../components/MetricCard"
 import CreateProjectModal from "../../components/CreateProjectModal"
-import Cookies from "js-cookie"
 
 export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -17,24 +16,24 @@ export default function Dashboard() {
 
   const fetchProjects = async () => {
     try {
-      const token = Cookies.get("token")
       const response = await fetch("http://localhost:5000/api/projects/getProjects", {
         method: "GET",
+        credentials: 'include', // Ensures HTTPOnly cookie is sent automatically
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
         }
       })
-      const data = await response.json()
+      const result = await response.json()
       if (response.ok) {
-        setProjects(data.projects)
+        setProjects(result.data)
       } else {
-        console.error("Failed to fetch projects:", data.message)
+        console.error("Failed to fetch projects:", result.message)
       }
     } catch (error) {
       console.error("Error fetching projects:", error)
     }
   }
+  
 
   return (
     <>
