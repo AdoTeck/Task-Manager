@@ -1,5 +1,5 @@
 import jwt, { SignOptions } from 'jsonwebtoken';
-import { IUser } from '../models/User';
+import { IUser } from '../models/user.models';
 import { config } from '../config/env';
 
 

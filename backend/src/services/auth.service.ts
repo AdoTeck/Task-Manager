@@ -1,7 +1,7 @@
-import { User, IUser } from "../models/User";
-import { Projects } from "../models/Projects";
+import { User, IUser } from "../models/user.models";
+import { Projects } from "../models/projects.models";
 import bcrypt from "bcrypt";
-import { generateToken } from '../utils/jwtUtils';
+import { generateToken } from '../utils/jwt.utils';
 
 export const registerUser = async (userData: IUser) => {
   const { userName, fullName, email, password } = userData;

@@ -1,7 +1,7 @@
 import express from "express";
-import { createProject, getProject } from "../controllers/projectController";
+import { createProject, getProject } from "../controllers/project.controller";
 
-import { authenticateUser } from "../middleware/authMiddleware";
+import { authenticateUser } from "../middleware/auth.middleware";
 
 const router = express.Router();
 

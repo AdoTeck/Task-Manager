@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { GetProject ,CreateProject} from "../services/projectService";
+import { GetProject ,CreateProject} from "../services/project.service";
 import mongoose from "mongoose";
 
 export const createProject = async (req: Request, res: Response): Promise<void> => {

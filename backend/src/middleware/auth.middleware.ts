@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { verifyToken } from '../utils/jwtUtils';
+import { verifyToken } from '../utils/jwt.utils';
 
 // Define the user interface for the token payload
 interface UserPayload {

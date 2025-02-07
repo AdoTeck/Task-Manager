@@ -4,8 +4,9 @@ import  { connectToDatabase } from './src/config/db';
 import cors from 'cors';
 
 // import { router as taskRoutes } from './src/routes/taskRoutes';
-import authRoutes from './src/routes/authRoutes';
-import projects from './src/routes/projectRoutes';
+import authRoutes from './src/routes/auth.routes';
+import projects from './src/routes/project.routes';
+import todo from './src/routes/todo.routes';
 import { errorHandler } from './src/utils/errorHandler';
 import cookieParser from 'cookie-parser';
 import { corsOptions } from './src/config/cors';
@@ -22,7 +23,7 @@ connectToDatabase();
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projects)
-
+app.use("/api/todo",todo )
 // Error handling middleware
 app.use(errorHandler);
 
