@@ -1,4 +1,5 @@
-import { Projects, IProject } from "../models/projects.models";
+import { Projects } from "../models/projects.models";
+import { IProject } from "../types/index";
 import mongoose from "mongoose";
 
 export const CreateProject = async (projectData: Partial<IProject>) => {

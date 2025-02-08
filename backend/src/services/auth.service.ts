@@ -1,4 +1,5 @@
-import { User, IUser } from "../models/user.models";
+import { User } from "../models/user.models";
+import { IUser } from "../types/index";
 import { Projects } from "../models/projects.models";
 import bcrypt from "bcrypt";
 import { generateToken } from '../utils/jwt.utils';

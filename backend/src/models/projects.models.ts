@@ -1,14 +1,5 @@
 import mongoose, { Document } from "mongoose";
-
-export interface IProject extends Document {
-  User: mongoose.Types.ObjectId;
-  ProjectTitle: string;
-  ProjectDescription: string;
-  DueDate: Date;
-  PriorityLevel: 'low' | 'medium' | 'high';
-  Status: 'Completed' | 'In Progress' | 'In Review';
-  Category: string;
-}
+import { IProject } from "../types/index";
 
 const ProjectSchema = new mongoose.Schema({
   User: {
