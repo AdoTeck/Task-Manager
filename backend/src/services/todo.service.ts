@@ -18,6 +18,20 @@ export const CreateTodoService = async (userData: ITodo, userId: string) => {
   return { id: newTodo._id, TodoTitle: newTodo.TodoTitle, TodoDescription: newTodo.TodoDescription };
 };
 
+export const UpdateTodoService = async (todoId: string, userData: ITodo) => {
+  const { TodoTitle, TodoDescription } = userData;
+  const todo = await Todo.findByIdAndUpdate(todoId, { TodoTitle, TodoDescription });
+}
+
+export const updateTodoService = async (id: string, data: any) => {
+    try {
+        const updatedTodo = await Todo.findByIdAndUpdate(id, data, { new: true });
+        return updatedTodo;
+    } catch (error) {
+        throw new Error("Error updating todo");
+    }
+};
+
 export const GetTodoService = async (userId: string) => {
   const todos = await Todo.find({ User: userId }).select("TodoTitle TodoDescription createdAt");
   return todos;

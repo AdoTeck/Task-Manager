@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {
   CreateTodoService,
   GetTodoService,
+  UpdateTodoService,
   DeleteTodoService,
 } from "../services/todo.service";
 
@@ -38,6 +39,19 @@ export const getTodoController = async (
   } catch (error: any) {
     console.error(error);
     res.status(400).json({ error: error.message });
+  }
+};
+
+export const updateTodoController = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { id, data } = req.body;
+    const updatedTodo = await UpdateTodoService(id, data);
+    res.status(200).json({ message: "Todo updated successfully ", updatedTodo });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating todo", error });
   }
 };
 
