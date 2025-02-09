@@ -18,7 +18,9 @@ export default function DashboardLayout({
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex flex-1 relative">
         <Sidebar isOpen={sidebarOpen} />
-        <main className="flex-1 p-4">{children}</main>
+        <main className="flex-1 p-4">
+          {children}
+          </main>
       </div>
 
       {/* Overlay for mobile when sidebar is open */}

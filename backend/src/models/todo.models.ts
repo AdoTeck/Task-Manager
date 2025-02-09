@@ -8,14 +8,18 @@ const TodoSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    TodoTitle: {
+    Title: {
       type: String,
       required: true,
     },
-    TodoDescription: {
+    Description: {
       type: String,
       required: true,
     },
+    Completed : {
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true,

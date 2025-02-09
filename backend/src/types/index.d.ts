@@ -11,8 +11,9 @@ export interface IProject extends mongoose.Document {
 }
 export interface ITodo extends mongoose.Document {
     User: mongoose.Types.ObjectId;
-    TodoTitle: string;
-    TodoDescription: string;
+    Title: string;
+    Description: string;
+    Completed: boolean;
 }
 
 export interface IUser extends mongoose.Document {

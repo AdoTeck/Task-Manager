@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post("/createtodo", authenticateUser, createTodoController );
 router.get("/gettodo", authenticateUser,getTodoController );
-router.put("/updatetodo", authenticateUser, updateTodoController);
-router.delete("/deletetodo", authenticateUser,deleteTodoController );
+router.put("/updatetodo/:todoId", authenticateUser, updateTodoController);
+router.delete("/deletetodo/:todoId", authenticateUser,deleteTodoController );
 
 export default router;

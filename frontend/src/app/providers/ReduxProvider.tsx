@@ -8,7 +8,7 @@ interface Props {
 }
 
 const ReduxProvider: React.FC<Props> = ({ children }) => {
-  return <Provider store={store}>{children}</Provider>;
+  return <Provider store={store} >{children}</Provider>;
 };
 
 export default ReduxProvider;

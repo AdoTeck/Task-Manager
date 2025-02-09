@@ -47,8 +47,9 @@ export const updateTodoController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { id, data } = req.body;
-    const updatedTodo = await UpdateTodoService(id, data);
+    const data = req.body;
+    const { todoId } = req.params;
+    const updatedTodo = await UpdateTodoService(todoId, data);
     res.status(200).json({ message: "Todo updated successfully ", updatedTodo });
   } catch (error) {
     res.status(500).json({ message: "Error updating todo", error });
