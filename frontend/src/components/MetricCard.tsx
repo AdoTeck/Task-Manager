@@ -1,10 +1,10 @@
-import { MoreVertical } from "lucide-react"
+import { MoreVertical } from 'lucide-react'
 
 export default function MetricCard({
   title,
   value,
   icon: Icon,
-  className = "",
+  className = '',
 }: {
   title: string
   value: any

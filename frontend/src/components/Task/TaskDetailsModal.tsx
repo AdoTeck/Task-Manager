@@ -1,4 +1,4 @@
-import type { Task } from "../../types"
+import type { Task } from '../../types'
 
 interface TaskDetailsModalProps {
   isOpen: boolean
@@ -11,11 +11,11 @@ export default function TaskDetailsModal({ isOpen, onClose, task }: TaskDetailsM
 
   const formatDueTime = (dueTime: string) => {
     const date = new Date(dueTime)
-    return date.toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
       hour12: true,
     })
   }
@@ -31,7 +31,7 @@ export default function TaskDetailsModal({ isOpen, onClose, task }: TaskDetailsM
           <strong>Due Time:</strong> {formatDueTime(task.dueTime)}
         </p>
         <p className="mb-4">
-          <strong>Status:</strong> {task.completed ? "Completed" : "Pending"}
+          <strong>Status:</strong> {task.completed ? 'Completed' : 'Pending'}
         </p>
         <div className="flex justify-end">
           <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
@@ -42,4 +42,3 @@ export default function TaskDetailsModal({ isOpen, onClose, task }: TaskDetailsM
     </div>
   )
 }
-

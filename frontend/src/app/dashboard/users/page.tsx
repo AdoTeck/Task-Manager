@@ -1,55 +1,65 @@
-"use client"
+'use client'
 // components/Users.tsx
-import { useState } from "react";
-import { Eye, X, Users, Plus, ClipboardList, ChevronRight ,User, Check, Briefcase} from "lucide-react";
+import { useState } from 'react'
+import {
+  Eye,
+  X,
+  Users,
+  Plus,
+  ClipboardList,
+  ChevronRight,
+  User,
+  Check,
+  Briefcase,
+} from 'lucide-react'
 
 interface User {
-  id: string;
-  name: string;
-  email: string;
-  projects: Project[];
+  id: string
+  name: string
+  email: string
+  projects: Project[]
 }
 
 interface Project {
-  id: string;
-  name: string;
+  id: string
+  name: string
 }
 
 export default function UsersComponent() {
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [showAddUserPopup, setShowAddUserPopup] = useState(false);
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  const [selectedProjects, setSelectedProjects] = useState<string[]>([]);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null)
+  const [showAddUserPopup, setShowAddUserPopup] = useState(false)
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([])
+  const [selectedProjects, setSelectedProjects] = useState<string[]>([])
   const [users] = useState<User[]>([
     {
-      id: "1",
-      name: "John Doe",
-      email: "john@taskmanager.com",
+      id: '1',
+      name: 'John Doe',
+      email: 'john@taskmanager.com',
       projects: [
-        { id: "p1", name: "Marketing Campaign" },
-        { id: "p2", name: "Product Launch" },
+        { id: 'p1', name: 'Marketing Campaign' },
+        { id: 'p2', name: 'Product Launch' },
       ],
     },
     // Add more mock users as needed
-  ]);
+  ])
   const [availableUsers] = useState([
-    { id: "2", name: "Sarah Smith", email: "sarah@company.com" },
-    { id: "3", name: "Mike Johnson", email: "mike@company.com" },
-  ]);
+    { id: '2', name: 'Sarah Smith', email: 'sarah@company.com' },
+    { id: '3', name: 'Mike Johnson', email: 'mike@company.com' },
+  ])
 
   const [availableProjects] = useState([
-    { id: "p3", name: "Website Redesign" },
-    { id: "p4", name: "Mobile App Development" },
-  ]);
+    { id: 'p3', name: 'Website Redesign' },
+    { id: 'p4', name: 'Mobile App Development' },
+  ])
 
   const handleAddUserSubmit = () => {
-    console.log("Adding users:", selectedUsers);
-    console.log("With projects:", selectedProjects);
-    setShowAddUserPopup(false);
+    console.log('Adding users:', selectedUsers)
+    console.log('With projects:', selectedProjects)
+    setShowAddUserPopup(false)
     // Reset selections
-    setSelectedUsers([]);
-    setSelectedProjects([]);
-  };
+    setSelectedUsers([])
+    setSelectedProjects([])
+  }
 
   return (
     <div className="bg-white min-h-screen p-8">
@@ -61,11 +71,9 @@ export default function UsersComponent() {
               <Users className="h-8 w-8 text-yellow-500" />
               Team Members
             </h1>
-            <p className="text-muted-foreground mt-2">
-              Manage and view team member activities
-            </p>
+            <p className="text-muted-foreground mt-2">Manage and view team member activities</p>
           </div>
-          <button 
+          <button
             onClick={() => setShowAddUserPopup(true)}
             className="px-4 py-2.5 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg flex items-center gap-2"
           >
@@ -76,7 +84,7 @@ export default function UsersComponent() {
 
         {/* Users List */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {users.map((user) => (
+          {users.map(user => (
             <div
               key={user.id}
               className="bg-white border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
@@ -117,7 +125,7 @@ export default function UsersComponent() {
 
               {/* Projects List */}
               <div className="p-6 space-y-4">
-                {selectedUser.projects.map((project) => (
+                {selectedUser.projects.map(project => (
                   <div
                     key={project.id}
                     className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-gray-50 transition-colors"
@@ -130,7 +138,7 @@ export default function UsersComponent() {
                       className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg flex items-center gap-2"
                       onClick={() => {
                         // Add navigation logic here
-                        console.log("Navigate to project tasks:", project.id);
+                        console.log('Navigate to project tasks:', project.id)
                       }}
                     >
                       View Tasks
@@ -176,19 +184,19 @@ export default function UsersComponent() {
                     Select Users
                   </h3>
                   <div className="grid grid-cols-1 gap-3">
-                    {availableUsers.map((user) => (
-                      <label 
+                    {availableUsers.map(user => (
+                      <label
                         key={user.id}
                         className="flex items-center gap-3 p-3 border border-border rounded-lg hover:bg-gray-50 cursor-pointer"
                       >
                         <input
                           type="checkbox"
                           checked={selectedUsers.includes(user.id)}
-                          onChange={(e) => {
+                          onChange={e => {
                             if (e.target.checked) {
-                              setSelectedUsers([...selectedUsers, user.id]);
+                              setSelectedUsers([...selectedUsers, user.id])
                             } else {
-                              setSelectedUsers(selectedUsers.filter(id => id !== user.id));
+                              setSelectedUsers(selectedUsers.filter(id => id !== user.id))
                             }
                           }}
                           className="h-4 w-4 text-yellow-500 border-input rounded focus:ring-yellow-500"
@@ -209,7 +217,7 @@ export default function UsersComponent() {
                     Assign Projects
                   </h3>
                   <div className="grid grid-cols-1 gap-3">
-                    {availableProjects.map((project) => (
+                    {availableProjects.map(project => (
                       <label
                         key={project.id}
                         className="flex items-center gap-3 p-3 border border-border rounded-lg hover:bg-gray-50 cursor-pointer"
@@ -217,11 +225,11 @@ export default function UsersComponent() {
                         <input
                           type="checkbox"
                           checked={selectedProjects.includes(project.id)}
-                          onChange={(e) => {
+                          onChange={e => {
                             if (e.target.checked) {
-                              setSelectedProjects([...selectedProjects, project.id]);
+                              setSelectedProjects([...selectedProjects, project.id])
                             } else {
-                              setSelectedProjects(selectedProjects.filter(id => id !== project.id));
+                              setSelectedProjects(selectedProjects.filter(id => id !== project.id))
                             }
                           }}
                           className="h-4 w-4 text-yellow-500 border-input rounded focus:ring-yellow-500"
@@ -253,5 +261,5 @@ export default function UsersComponent() {
         )}
       </div>
     </div>
-  );
+  )
 }

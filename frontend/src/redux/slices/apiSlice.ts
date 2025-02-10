@@ -1,52 +1,53 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-interface Todo {  
-  _id : string;  
-  Title: string;
-  Description: string;
-  Completed: boolean;
-  createdAt : string;
+interface Todo {
+  _id: string
+  Title: string
+  Description: string
+  Completed: boolean
+  createdAt: string
 }
 
 interface ApiResponse {
-  message: string;
-  todo: Todo[];
+  message: string
+  todo: Todo[]
 }
 
 interface CreateTodoRequest {
-  Title: string;
-  Description: string;
+  Title: string
+  Description: string
 }
 
 interface UpdateTodoRequest {
-  _id: string;
-  Title: string;
-  Description: string;
-  Completed?: boolean;
+  _id: string
+  Title: string
+  Description: string
+  Completed?: boolean
 }
 
 export const api = createApi({
-  reducerPath: "api",
-  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api/todo",
-    credentials: "include", 
-    prepareHeaders: (headers) => {
-      headers.set("Content-Type", "application/json"); 
-      return headers; 
+  reducerPath: 'api',
+  baseQuery: fetchBaseQuery({
+    baseUrl: 'http://localhost:5000/api/todo',
+    credentials: 'include',
+    prepareHeaders: headers => {
+      headers.set('Content-Type', 'application/json')
+      return headers
     },
-   }),
-   tagTypes: ['Todo'], 
-  endpoints: (builder) => ({
+  }),
+  tagTypes: ['Todo'],
+  endpoints: builder => ({
     getTodo: builder.query<ApiResponse, void>({
-      query: () => "/gettodo",
+      query: () => '/gettodo',
       providesTags: ['Todo'],
     }),
     createTodo: builder.mutation<ApiResponse, CreateTodoRequest>({
-      query: (newTodo) =>({
-        url: "/createtodo",
+      query: newTodo => ({
+        url: '/createtodo',
         method: 'POST',
         body: newTodo,
       }),
-      invalidatesTags: ['Todo']
+      invalidatesTags: ['Todo'],
     }),
     updateTodo: builder.mutation<ApiResponse, UpdateTodoRequest>({
       query: ({ _id, ...updatedTodo }) => ({
@@ -54,16 +55,21 @@ export const api = createApi({
         method: 'PUT',
         body: updatedTodo,
       }),
-      invalidatesTags: ['Todo']
+      invalidatesTags: ['Todo'],
     }),
-    deleteTodo : builder.mutation<ApiResponse, string>({
-      query: (id) => ({
+    deleteTodo: builder.mutation<ApiResponse, string>({
+      query: id => ({
         url: `/deletetodo/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Todo'],
     }),
-  }), 
-});
+  }),
+})
 
-export const { useGetTodoQuery, useCreateTodoMutation,useDeleteTodoMutation ,useUpdateTodoMutation } = api;
+export const {
+  useGetTodoQuery,
+  useCreateTodoMutation,
+  useDeleteTodoMutation,
+  useUpdateTodoMutation,
+} = api

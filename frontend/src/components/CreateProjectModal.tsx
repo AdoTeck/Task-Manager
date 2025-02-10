@@ -1,7 +1,7 @@
-import { useState } from "react"
-import { X } from "lucide-react"
-import { useRouter } from "next/navigation"
-import toast, { Toaster } from 'react-hot-toast';
+import { useState } from 'react'
+import { X } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import toast, { Toaster } from 'react-hot-toast'
 
 interface CreateProjectModalProps {
   isOpen: boolean
@@ -11,23 +11,22 @@ interface CreateProjectModalProps {
 export default function CreateProjectModal({ isOpen, onClose }: CreateProjectModalProps) {
   const router = useRouter()
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    dueDate: "",
-    priority: "medium",
-    status: "In Progress",
-    category: "",
+    title: '',
+    description: '',
+    dueDate: '',
+    priority: 'medium',
+    status: 'In Progress',
+    category: '',
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
-      const response = await fetch("http://localhost:5000/api/projects/create", 
-      {
-        method: "POST",
+      const response = await fetch('http://localhost:5000/api/projects/create', {
+        method: 'POST',
         credentials: 'include', // Ensures HTTPOnly cookie is sent automatically
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ProjectTitle: formData.title,
@@ -37,27 +36,27 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
           Status: formData.status,
           Category: formData.category.split(',').map(cat => cat.trim()),
         }),
-      });
+      })
 
       if (!response.ok) {
-        throw new Error('Failed to create project');
+        throw new Error('Failed to create project')
       }
 
-      const result = await response.json();
-      console.log("Project Created:", result);
-      toast.success("Project Created Successfully");
-      onClose();
-      router.push("/dashboard/projects");
+      const result = await response.json()
+      console.log('Project Created:', result)
+      toast.success('Project Created Successfully')
+      onClose()
+      router.push('/dashboard/projects')
     } catch (error: any) {
-      console.error("Error creating project:", error);
+      console.error('Error creating project:', error)
       if (error.response?.status === 401) {
-        toast.error("Please login to create a project");
-        router.push('/login');
+        toast.error('Please login to create a project')
+        router.push('/login')
       } else {
-        toast.error("Failed to create project. Please check all fields and try again.");
+        toast.error('Failed to create project. Please check all fields and try again.')
       }
     }
-  };
+  }
 
   if (!isOpen) return null
 
@@ -65,7 +64,10 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
       <Toaster position="top-right" reverseOrder={false} />
       <div className="bg-white rounded-lg w-full max-w-md p-6 relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+        >
           <X className="h-6 w-6" />
         </button>
 
@@ -79,18 +81,20 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              onChange={e => setFormData({ ...formData, title: e.target.value })}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Project Description</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Project Description
+            </label>
             <textarea
               required
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              onChange={e => setFormData({ ...formData, description: e.target.value })}
             />
           </div>
 
@@ -101,7 +105,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
               value={formData.dueDate}
-              onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+              onChange={e => setFormData({ ...formData, dueDate: e.target.value })}
             />
           </div>
 
@@ -110,7 +114,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
             <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
               value={formData.priority}
-              onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+              onChange={e => setFormData({ ...formData, priority: e.target.value })}
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -122,7 +126,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
             <select
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
               value={formData.status}
-              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              onChange={e => setFormData({ ...formData, status: e.target.value })}
             >
               <option value="Completed">Completed</option>
               <option value="In Progress">In Progress</option>
@@ -136,7 +140,7 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
               placeholder="Enter categories separated by commas"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-400"
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={e => setFormData({ ...formData, category: e.target.value })}
             />
           </div>
 
@@ -160,4 +164,3 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
     </div>
   )
 }
-

@@ -1,55 +1,53 @@
-"use client";
-import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+'use client'
+import Link from 'next/link'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { Eye, EyeOff } from 'lucide-react'
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter()
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError("");
-    setIsLoading(true);
+  const handleSubmit = async e => {
+    e.preventDefault()
+    setError('')
+    setIsLoading(true)
 
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+    const email = e.target.email.value
+    const password = e.target.password.value
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
-        credentials: 'include'
-      });
+        credentials: 'include',
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.message || "Login failed");
+        throw new Error(data.message || 'Login failed')
       }
 
       // Redirect to dashboard or home page
-      router.push("/dashboard");
+      router.push('/dashboard')
     } catch (error) {
-      setError(error.message);
+      setError(error.message)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md bg-card p-8 rounded-lg shadow-lg border border-border">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Welcome Back
-          </h1>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
           <p className="text-muted-foreground">Please sign in to continue</p>
         </div>
 
@@ -61,10 +59,7 @@ export default function LoginPage() {
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-foreground mb-2"
-            >
+            <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
               Email Address
             </label>
             <input
@@ -78,10 +73,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-foreground mb-2"
-            >
+            <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
               Password
             </label>
             <div className="relative">
@@ -109,7 +101,7 @@ export default function LoginPage() {
             disabled={isLoading}
             className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isLoading ? "Signing in..." : "Sign In"}
+            {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
 
           {/* Rest of your social login buttons and signup link remain the same */}
@@ -118,9 +110,7 @@ export default function LoginPage() {
               <div className="w-full border-t border-border"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-card text-muted-foreground">
-                Or continue with
-              </span>
+              <span className="px-2 bg-card text-muted-foreground">Or continue with</span>
             </div>
           </div>
 
@@ -141,16 +131,13 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
-            Don't have an account?{" "}
-            <Link
-              href="/signup"
-              className="text-yellow-500 hover:text-yellow-600 font-semibold"
-            >
+            Don't have an account?{' '}
+            <Link href="/signup" className="text-yellow-500 hover:text-yellow-600 font-semibold">
               Sign up
             </Link>
           </p>
         </form>
       </div>
     </div>
-  );
+  )
 }

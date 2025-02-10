@@ -1,6 +1,15 @@
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Bell, Search, ChevronDown, User, Menu, CheckCircle, AlertTriangle, Info } from "lucide-react"
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import {
+  Bell,
+  Search,
+  ChevronDown,
+  User,
+  Menu,
+  CheckCircle,
+  AlertTriangle,
+  Info,
+} from 'lucide-react'
 
 interface NavbarProps {
   toggleSidebar: () => void
@@ -15,25 +24,25 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
   const [notifications] = useState([
     {
       id: 1,
-      type: "success",
-      title: "Task completed",
-      message: "Design homepage task marked as completed",
-      time: "2h ago"
+      type: 'success',
+      title: 'Task completed',
+      message: 'Design homepage task marked as completed',
+      time: '2h ago',
     },
     {
       id: 2,
-      type: "warning",
-      title: "Deadline approaching",
-      message: "Marketing project deadline in 3 days",
-      time: "4h ago"
+      type: 'warning',
+      title: 'Deadline approaching',
+      message: 'Marketing project deadline in 3 days',
+      time: '4h ago',
     },
     {
       id: 3,
-      type: "info",
-      title: "New assignment",
+      type: 'info',
+      title: 'New assignment',
       message: "You've been assigned to the mobile app project",
-      time: "1d ago"
-    }
+      time: '1d ago',
+    },
   ])
 
   const handleLogout = async () => {
@@ -41,24 +50,24 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
       const response = await fetch('http://localhost:5000/api/auth/logout', {
         method: 'POST',
         credentials: 'include',
-      });
+      })
 
       if (response.ok) {
-        router.push("/login");
+        router.push('/login')
       } else {
-        throw new Error('Logout failed');
+        throw new Error('Logout failed')
       }
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('Logout error:', error)
       // You might want to show an error message to the user here
     }
   }
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case "success":
+      case 'success':
         return <CheckCircle className="h-5 w-5 text-green-500" />
-      case "warning":
+      case 'warning':
         return <AlertTriangle className="h-5 w-5 text-yellow-500" />
       default:
         return <Info className="h-5 w-5 text-blue-500" />
@@ -80,7 +89,7 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
               <span className="text-2xl font-bold text-gray-800">Task Manager</span>
             </div>
           </div>
-          
+
           <div className="flex items-center space-x-4">
             {/* Notification Dropdown */}
             <div className="relative">
@@ -95,15 +104,15 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                   </span>
                 )}
               </button>
-              
+
               {isNotificationOpen && (
                 <div className="absolute right-0 mt-2 w-80 bg-white rounded-md shadow-lg py-1 z-20 border border-gray-100">
                   <div className="px-4 py-2 border-b border-gray-200">
                     <h3 className="text-lg font-semibold">Notifications</h3>
                   </div>
-                  
+
                   <div className="max-h-96 overflow-y-auto">
-                    {notifications.map((notification) => (
+                    {notifications.map(notification => (
                       <div
                         key={notification.id}
                         className="px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0"
@@ -138,10 +147,13 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                 <User className="h-8 w-8 rounded-full bg-yellow-200 p-1" />
                 <ChevronDown className="ml-1 h-4 w-4" />
               </button>
-              
+
               {isProfileOpen && (
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-100">
-                  <a href="/dashboard/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                  <a
+                    href="/dashboard/profile"
+                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  >
                     Profile
                   </a>
                   <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">

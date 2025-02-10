@@ -1,4 +1,4 @@
-"use client"
+'use client'
 import Link from 'next/link'
 import { useState } from 'react'
 import axios from 'axios'
@@ -11,7 +11,7 @@ export default function SignupPage() {
     userName: '',
     fullName: '',
     email: '',
-    password: ''
+    password: '',
   })
   const router = useRouter()
 
@@ -28,7 +28,7 @@ export default function SignupPage() {
 
     try {
       const { data } = await axios.post('http://localhost:5000/api/auth/signup', formData, {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       })
 
       toast.success(data.message || 'Account created successfully!')

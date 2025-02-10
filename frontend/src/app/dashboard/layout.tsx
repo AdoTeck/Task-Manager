@@ -1,26 +1,20 @@
-"use client";
-import Navbar from "../../components/Navbar";
-import Sidebar from "../../components/Sidebar";
-import { useState } from "react";
+'use client'
+import Navbar from '../../components/Navbar'
+import Sidebar from '../../components/Sidebar'
+import { useState } from 'react'
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
-  };
+    setSidebarOpen(!sidebarOpen)
+  }
   return (
     <div className="flex flex-col h-screen bg-[#ECECEC]">
       <Navbar toggleSidebar={toggleSidebar} />
       <div className="flex flex-1 relative">
         <Sidebar isOpen={sidebarOpen} />
-        <main className="flex-1 p-4">
-          {children}
-          </main>
+        <main className="flex-1 p-4">{children}</main>
       </div>
 
       {/* Overlay for mobile when sidebar is open */}
@@ -31,5 +25,5 @@ export default function DashboardLayout({
         ></div>
       )}
     </div>
-  );
+  )
 }

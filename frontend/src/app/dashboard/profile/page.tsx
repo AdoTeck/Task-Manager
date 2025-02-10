@@ -1,59 +1,59 @@
-"use client"
-import Link from "next/link";
-import { ChevronLeft, User, Mail, Lock, Bell, Upload, CheckCircle } from "lucide-react";
-import { useState, useEffect, useRef } from "react";
+'use client'
+import Link from 'next/link'
+import { ChevronLeft, User, Mail, Lock, Bell, Upload, CheckCircle } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
 
 export default function ProfilePage() {
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [profile, setProfile] = useState({ fullName: "", email: "", totalProjects: 0 });
-  const fullNameRef = useRef<HTMLInputElement>(null);
-  const newPasswordRef = useRef<HTMLInputElement>(null);
-  const confirmPasswordRef = useRef<HTMLInputElement>(null);
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [profile, setProfile] = useState({ fullName: '', email: '', totalProjects: 0 })
+  const fullNameRef = useRef<HTMLInputElement>(null)
+  const newPasswordRef = useRef<HTMLInputElement>(null)
+  const confirmPasswordRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     // Fetch user profile details
-    fetch("http://localhost:5000/api/auth/profile", {
-      method: "GET",
-      credentials: "include", // Ensure cookies are sent with the request
+    fetch('http://localhost:5000/api/auth/profile', {
+      method: 'GET',
+      credentials: 'include', // Ensure cookies are sent with the request
     })
       .then(response => response.json())
       .then(data => {
-        setProfile(data);
+        setProfile(data)
       })
       .catch(error => {
-        console.error("Error fetching profile:", error);
-      });
-  }, []);
+        console.error('Error fetching profile:', error)
+      })
+  }, [])
 
   const handleSaveChanges = () => {
     const updatedProfile = {
       fullName: fullNameRef.current?.value || profile.fullName,
       password: newPasswordRef.current?.value,
-    };
+    }
 
-    fetch("http://localhost:5000/api/auth/profile", {
-      method: "PATCH",
-      credentials: "include", // Ensure cookies are sent with the request
+    fetch('http://localhost:5000/api/auth/profile', {
+      method: 'PATCH',
+      credentials: 'include', // Ensure cookies are sent with the request
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(updatedProfile),
     })
       .then(response => {
         if (response.ok) {
-          setShowSuccess(true);
+          setShowSuccess(true)
         } else {
-          throw new Error("Error updating profile");
+          throw new Error('Error updating profile')
         }
       })
       .catch(error => {
-        console.error("Error updating profile:", error);
-      });
-  };
+        console.error('Error updating profile:', error)
+      })
+  }
   // Demo password strength calculation
   const calculateStrength = (password: string) => {
-    return Math.min(password.length * 10, 100);
-  };
+    return Math.min(password.length * 10, 100)
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -140,7 +140,7 @@ export default function ProfilePage() {
                     className="w-full px-4 py-2.5 rounded-lg border border-input bg-card focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all"
                   />
                 </div>
-                
+
                 <div>
                   <label className="block text-sm font-medium text-muted-foreground mb-2">
                     Email Address
@@ -176,9 +176,11 @@ export default function ProfilePage() {
                     <Lock className="h-5 w-5 text-muted-foreground absolute right-3 top-3" />
                   </div>
                   <div className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                    <div 
+                    <div
                       className="h-full bg-yellow-500 transition-all duration-300"
-                      style={{ width: `${calculateStrength(newPasswordRef.current?.value || "")}%` }}
+                      style={{
+                        width: `${calculateStrength(newPasswordRef.current?.value || '')}%`,
+                      }}
                     />
                   </div>
                 </div>
@@ -257,7 +259,7 @@ export default function ProfilePage() {
 
             {/* Save Button */}
             <div className="flex justify-end">
-              <button 
+              <button
                 onClick={handleSaveChanges}
                 className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
               >
@@ -268,5 +270,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

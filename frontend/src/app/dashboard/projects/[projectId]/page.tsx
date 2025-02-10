@@ -2,10 +2,10 @@
 
 import { useState } from 'react'
 import { PlusCircle, ChevronDown } from 'lucide-react'
-import TaskList from '../../components/Task/TaskList'
-import AddTaskModal from '../../components/Task/AddTaskModal'
-import TaskDetailsModal from '../../components/Task/TaskDetailsModal'
-import type { Task } from '../../types'
+import TaskList from '@/components/Task/TaskList'
+import AddTaskModal from '@/components/Task/AddTaskModal'
+import TaskDetailsModal from '@/components/Task/TaskDetailsModal'
+import type { Task } from '@/types'
 
 export default function TaskManager() {
   const [tasks, setTasks] = useState<Task[]>([

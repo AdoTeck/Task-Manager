@@ -1,5 +1,5 @@
-import { Eye, Trash2, Check, X } from "lucide-react"
-import type { Task } from "../../types"
+import { Eye, Trash2, Check, X } from 'lucide-react'
+import type { Task } from '../../types'
 
 interface TaskListProps {
   title: string
@@ -9,20 +9,26 @@ interface TaskListProps {
   onViewDetails: (task: Task) => void
 }
 
-export default function TaskList({ title, tasks, onToggle, onDelete, onViewDetails }: TaskListProps) {
+export default function TaskList({
+  title,
+  tasks,
+  onToggle,
+  onDelete,
+  onViewDetails,
+}: TaskListProps) {
   const getTaskColor = (task: Task) => {
-    if (task.completed) return "bg-green-500"
+    if (task.completed) return 'bg-green-500'
     const now = new Date()
     const dueDate = new Date(task.dueTime)
-    if (dueDate < now) return "bg-red-500"
-    return "bg-yellow-500"
+    if (dueDate < now) return 'bg-red-500'
+    return 'bg-yellow-500'
   }
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6">
       <h2 className="text-xl font-semibold text-primary mb-4">{title}</h2>
       <div className="space-y-2">
-        {tasks.map((task) => (
+        {tasks.map(task => (
           <div key={task.id} className="bg-white rounded-lg shadow-md p-4">
             <div className="flex items-center space-x-2">
               <div
@@ -43,7 +49,11 @@ export default function TaskList({ title, tasks, onToggle, onDelete, onViewDetai
                 onClick={() => onToggle(task.id)}
                 className="p-1 rounded-full bg-gray-200 hover:bg-gray-300 transition-colors duration-200"
               >
-                {task.completed ? <X className="h-4 w-4 text-gray-600" /> : <Check className="h-4 w-4 text-gray-600" />}
+                {task.completed ? (
+                  <X className="h-4 w-4 text-gray-600" />
+                ) : (
+                  <Check className="h-4 w-4 text-gray-600" />
+                )}
               </button>
               <button
                 onClick={() => onDelete(task.id)}
@@ -58,4 +68,3 @@ export default function TaskList({ title, tasks, onToggle, onDelete, onViewDetai
     </div>
   )
 }
-

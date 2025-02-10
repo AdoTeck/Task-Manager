@@ -1,38 +1,38 @@
-"use client"
+'use client'
 
-import { ChevronLeft, ChevronRight, Plus, Clock } from "lucide-react";
-import { useState } from "react";
+import { ChevronLeft, ChevronRight, Plus, Clock } from 'lucide-react'
+import { useState } from 'react'
 
 export default function Timesheet() {
-  const [currentWeek, setCurrentWeek] = useState(new Date());
+  const [currentWeek, setCurrentWeek] = useState(new Date())
   const [entries, setEntries] = useState([
-    { id: 1, task: "Project Research", hours: [4, 6, 5, 7, 3, 0, 0] },
-    { id: 2, task: "UI Development", hours: [2, 8, 6, 4, 5, 0, 0] },
-  ]);
+    { id: 1, task: 'Project Research', hours: [4, 6, 5, 7, 3, 0, 0] },
+    { id: 2, task: 'UI Development', hours: [2, 8, 6, 4, 5, 0, 0] },
+  ])
 
   // Date handling utilities
-  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
   const getWeekDates = (date: Date) => {
-    const start = new Date(date);
-    start.setDate(date.getDate() - date.getDay());
+    const start = new Date(date)
+    start.setDate(date.getDate() - date.getDay())
     return Array.from({ length: 7 }, (_, i) => {
-      const day = new Date(start);
-      day.setDate(start.getDate() + i);
-      return day;
-    });
-  };
+      const day = new Date(start)
+      day.setDate(start.getDate() + i)
+      return day
+    })
+  }
 
   const handleHourChange = (entryId: number, dayIndex: number, value: string) => {
     const newEntries = entries.map(entry => {
       if (entry.id === entryId) {
-        const newHours = [...entry.hours];
-        newHours[dayIndex] = Math.min(24, Math.max(0, parseInt(value) || 0));
-        return { ...entry, hours: newHours };
+        const newHours = [...entry.hours]
+        newHours[dayIndex] = Math.min(24, Math.max(0, parseInt(value) || 0))
+        return { ...entry, hours: newHours }
       }
-      return entry;
-    });
-    setEntries(newEntries);
-  };
+      return entry
+    })
+    setEntries(newEntries)
+  }
 
   return (
     <div className="bg-background text-foreground p-6 rounded-xl border border-border shadow-sm">
@@ -51,13 +51,17 @@ export default function Timesheet() {
           </button>
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setCurrentWeek(new Date(currentWeek.setDate(currentWeek.getDate() - 7)))}
+              onClick={() =>
+                setCurrentWeek(new Date(currentWeek.setDate(currentWeek.getDate() - 7)))
+              }
               className="p-2 hover:bg-accent rounded-lg"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
             <button
-              onClick={() => setCurrentWeek(new Date(currentWeek.setDate(currentWeek.getDate() + 7)))}
+              onClick={() =>
+                setCurrentWeek(new Date(currentWeek.setDate(currentWeek.getDate() + 7)))
+              }
               className="p-2 hover:bg-accent rounded-lg"
             >
               <ChevronRight className="h-4 w-4" />
@@ -73,14 +77,12 @@ export default function Timesheet() {
           <div
             key={index}
             className={`text-center p-2 rounded-lg ${
-              date.toDateString() === new Date().toDateString() 
+              date.toDateString() === new Date().toDateString()
                 ? 'bg-yellow-500/20 border border-yellow-500'
                 : 'bg-card'
             }`}
           >
-            <div className="text-sm font-medium text-muted-foreground">
-              {daysOfWeek[index]}
-            </div>
+            <div className="text-sm font-medium text-muted-foreground">{daysOfWeek[index]}</div>
             <div className="text-foreground">{date.getDate()}</div>
           </div>
         ))}
@@ -88,7 +90,7 @@ export default function Timesheet() {
 
       {/* Timesheet Entries */}
       <div className="space-y-4">
-        {entries.map((entry) => (
+        {entries.map(entry => (
           <div
             key={entry.id}
             className="grid grid-cols-8 gap-2 items-center bg-card p-3 rounded-lg border border-border"
@@ -101,7 +103,7 @@ export default function Timesheet() {
                 min="0"
                 max="24"
                 value={hours}
-                onChange={(e) => handleHourChange(entry.id, dayIndex, e.target.value)}
+                onChange={e => handleHourChange(entry.id, dayIndex, e.target.value)}
                 className="w-full px-2 py-1 text-center border border-input rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
               />
             ))}
@@ -120,12 +122,10 @@ export default function Timesheet() {
       </div>
 
       {/* Add Entry Button */}
-      <button
-        className="mt-6 w-full px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg flex items-center justify-center gap-2"
-      >
+      <button className="mt-6 w-full px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg flex items-center justify-center gap-2">
         <Plus className="h-4 w-4" />
         Add New Entry
       </button>
     </div>
-  );
+  )
 }

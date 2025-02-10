@@ -1,39 +1,38 @@
-"use client"
+'use client'
 
-import { useState, useEffect } from "react"
-import { Clock, FolderOpen, CheckCircle, Plus } from "lucide-react"
-import MetricCard from "../../components/MetricCard"
-import CreateProjectModal from "../../components/CreateProjectModal"
+import { useState, useEffect } from 'react'
+import { Clock, FolderOpen, CheckCircle, Plus } from 'lucide-react'
+import MetricCard from '../../components/MetricCard'
+import CreateProjectModal from '../../components/CreateProjectModal'
 
 export default function Dashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [projects, setProjects] = useState([])
 
   useEffect(() => {
-    console.log("Dashboard component mounted")
+    console.log('Dashboard component mounted')
     fetchProjects()
   }, [])
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/projects/getProjects", {
-        method: "GET",
+      const response = await fetch('http://localhost:5000/api/projects/getProjects', {
+        method: 'GET',
         credentials: 'include', // Ensures HTTPOnly cookie is sent automatically
         headers: {
-          "Content-Type": "application/json",
-        }
+          'Content-Type': 'application/json',
+        },
       })
       const result = await response.json()
       if (response.ok) {
         setProjects(result.data)
       } else {
-        console.error("Failed to fetch projects:", result.message)
+        console.error('Failed to fetch projects:', result.message)
       }
     } catch (error) {
-      console.error("Error fetching projects:", error)
+      console.error('Error fetching projects:', error)
     }
   }
-  
 
   return (
     <>
@@ -43,9 +42,24 @@ export default function Dashboard() {
 
           {/* Metrics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <MetricCard title="Work Summary" value="75%" icon={CheckCircle} className="bg-yellow-50" />
-            <MetricCard title="Worked This Week" value="40:00:05" icon={Clock} className="bg-yellow-50" />
-            <MetricCard title="Project Worked" value={projects.length} icon={FolderOpen} className="bg-yellow-50" />
+            <MetricCard
+              title="Work Summary"
+              value="75%"
+              icon={CheckCircle}
+              className="bg-yellow-50"
+            />
+            <MetricCard
+              title="Worked This Week"
+              value="40:00:05"
+              icon={Clock}
+              className="bg-yellow-50"
+            />
+            <MetricCard
+              title="Project Worked"
+              value={projects.length}
+              icon={FolderOpen}
+              className="bg-yellow-50"
+            />
           </div>
 
           {/* Create Project Button */}
@@ -94,4 +108,3 @@ export default function Dashboard() {
     </>
   )
 }
-

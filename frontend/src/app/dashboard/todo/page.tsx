@@ -1,56 +1,50 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import { Check, Edit, Trash, Plus, Eye, X } from "lucide-react";
+import { useState, useEffect } from 'react'
+import { Check, Edit, Trash, Plus, Eye, X } from 'lucide-react'
 import {
   useCreateTodoMutation,
   useGetTodoQuery,
   useDeleteTodoMutation,
   useUpdateTodoMutation,
-} from "@/redux/slices/apiSlice";
+} from '@/redux/slices/apiSlice'
 
 interface Todo {
-  _id: string;
-  Title: string;
-  Description: string;
-  Completed: boolean;
-  createdAt: string;
+  _id: string
+  Title: string
+  Description: string
+  Completed: boolean
+  createdAt: string
 }
 interface ApiResponse {
-  message: string;
-  todo: Todo[];
+  message: string
+  todo: Todo[]
 }
 
 export default function TodoComponent() {
-  const {
-    data: apiResponse,
-    isLoading,
-    error,
-    refetch,
-  } = useGetTodoQuery<ApiResponse>();
-  const [createTodo, { isLoading: isCreating }] = useCreateTodoMutation();
-  const [deleteTodoMutation] = useDeleteTodoMutation();
-  const [updateTodo, { isLoading: isUpdating }] = useUpdateTodoMutation();
-  const [filter, setFilter] = useState<"all" | "active" | "Completed">("all");
-  const [newTitle, setNewTitle] = useState("");
-  const [newDescription, setNewDescription] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [viewTodo, setViewTodo] = useState<Todo | null>(null);
-  const [editTodo, setEditTodo] = useState<Todo | null>(null);
-  const [localTodos, setLocalTodos] = useState<Todo[]>([]);
+  const { data: apiResponse, isLoading, error, refetch } = useGetTodoQuery<ApiResponse>()
+  const [createTodo, { isLoading: isCreating }] = useCreateTodoMutation()
+  const [deleteTodoMutation] = useDeleteTodoMutation()
+  const [updateTodo, { isLoading: isUpdating }] = useUpdateTodoMutation()
+  const [filter, setFilter] = useState<'all' | 'active' | 'Completed'>('all')
+  const [newTitle, setNewTitle] = useState('')
+  const [newDescription, setNewDescription] = useState('')
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [viewTodo, setViewTodo] = useState<Todo | null>(null)
+  const [editTodo, setEditTodo] = useState<Todo | null>(null)
+  const [localTodos, setLocalTodos] = useState<Todo[]>([])
 
-  // Update localTodos when the API data changes
   useEffect(() => {
     if (apiResponse?.todo) {
-      setLocalTodos(apiResponse.todo);
+      setLocalTodos(apiResponse.todo)
     }
-  }, [apiResponse]);
+  }, [apiResponse])
 
-  const filteredTodos = localTodos.filter((todo) => {
-    if (filter === "active") return !todo.Completed;
-    if (filter === "Completed") return todo.Completed;
-    return true;
-  });
+  const filteredTodos = localTodos.filter(todo => {
+    if (filter === 'active') return !todo.Completed
+    if (filter === 'Completed') return todo.Completed
+    return true
+  })
 
   const addTodo = async () => {
     if (newTitle.trim()) {
@@ -58,38 +52,42 @@ export default function TodoComponent() {
         await createTodo({
           Title: newTitle,
           Description: newDescription,
-        });
-        refetch();
-        setNewTitle("");
-        setNewDescription("");
-        setIsModalOpen(false);
+        })
+        refetch()
+        setNewTitle('')
+        setNewDescription('')
+        setIsModalOpen(false)
       } catch (error) {
-        console.error("Failed to create todo:", error);
+        console.error('Failed to create todo:', error)
       }
     }
-  };
+  }
 
   const toggleTodo = async (id: string, completed: boolean) => {
     try {
       await updateTodo({
         _id: id,
-        Completed: !completed,  // Toggle the completed value
-      });
+        Completed: !completed,
+      })
+      refetch()
     } catch (error) {
-      console.error("Failed to update todo:", error);
+      console.error('Failed to update todo:', error)
     }
-  };
+  }
 
   const deleteTodo = async (id: string) => {
     try {
-      await deleteTodoMutation(id);
+      await deleteTodoMutation(id)
+      refetch()
     } catch (error) {
-      console.error("Failed to delete todo:", error);
+      console.error('Failed to delete todo:', error)
     }
-  };
+  }
+
   const openEditModal = (todo: Todo) => {
-    setEditTodo(todo);
-  };
+    setEditTodo(todo)
+  }
+
   const handleEditSave = async () => {
     if (editTodo) {
       try {
@@ -97,14 +95,14 @@ export default function TodoComponent() {
           _id: editTodo._id,
           Title: editTodo.Title,
           Description: editTodo.Description,
-        });
-        refetch();
-        setEditTodo(null);
+        })
+        refetch()
+        setEditTodo(null)
       } catch (error) {
-        console.error("Failed to update todo:", error);
+        console.error('Failed to update todo:', error)
       }
     }
-  };
+  }
 
   if (isLoading) {
     return (
@@ -112,7 +110,7 @@ export default function TodoComponent() {
         <div className="animate-spin inline-block w-8 h-8 border-4 rounded-full border-yellow-500 border-t-transparent"></div>
         <p className="mt-4 text-muted-foreground">Loading tasks...</p>
       </div>
-    );
+    )
   }
 
   if (error) {
@@ -120,7 +118,7 @@ export default function TodoComponent() {
       <div className="bg-background text-foreground rounded-xl border border-border p-6 shadow-sm max-w-2xl mx-auto text-center text-red-500">
         Error loading tasks. Please try again later.
       </div>
-    );
+    )
   }
 
   return (
@@ -132,7 +130,7 @@ export default function TodoComponent() {
           Task Manager
         </h2>
         <p className="text-muted-foreground mt-2">
-          {localTodos.filter((todo) => !todo.Completed).length} tasks remaining
+          {localTodos.filter(todo => !todo.Completed).length} tasks remaining
         </p>
       </div>
 
@@ -147,7 +145,7 @@ export default function TodoComponent() {
 
       {/* Todo List */}
       <div className="space-y-3 mb-6">
-        {filteredTodos.map((todo) => (
+        {filteredTodos.map(todo => (
           <div
             key={todo._id}
             className="flex items-center gap-3 p-4 bg-card border border-border rounded-lg hover:bg-accent transition-colors"
@@ -156,19 +154,15 @@ export default function TodoComponent() {
               onClick={() => toggleTodo(todo._id, todo.Completed)}
               className={`p-1.5 rounded-md border ${
                 todo.Completed
-                  ? "bg-yellow-500 border-yellow-500 text-white"
-                  : "border-input text-transparent hover:border-yellow-500"
+                  ? 'bg-yellow-500 border-yellow-500 text-white'
+                  : 'border-input text-transparent hover:border-yellow-500'
               }`}
             >
               <Check className="h-4 w-4" />
             </button>
 
             <div className="flex-1">
-              <span
-                className={`${
-                  todo.Completed ? "line-through text-muted-foreground" : ""
-                }`}
-              >
+              <span className={`${todo.Completed ? 'line-through text-muted-foreground' : ''}`}>
                 {todo.Title}
               </span>
               <p className="text-sm text-muted-foreground mt-1">
@@ -203,22 +197,18 @@ export default function TodoComponent() {
       {/* Filters and Stats */}
       <div className="flex items-center justify-between">
         <div className="flex gap-2">
-          {["all", "active", "Completed"].map((f) => (
+          {['all', 'active', 'Completed'].map(f => (
             <button
               key={f}
-              onClick={() => setFilter(f as "all" | "active" | "Completed")}
+              onClick={() => setFilter(f as 'all' | 'active' | 'Completed')}
               className={`px-3 py-1 rounded-md text-sm ${
-                filter === f
-                  ? "bg-yellow-500 text-white"
-                  : "text-muted-foreground hover:bg-accent"
+                filter === f ? 'bg-yellow-500 text-white' : 'text-muted-foreground hover:bg-accent'
               }`}
             >
               {f.charAt(0).toUpperCase() + f.slice(1)} (
-              {f === "all"
+              {f === 'all'
                 ? localTodos.length
-                : localTodos.filter((t) =>
-                    f === "active" ? !t.Completed : t.Completed
-                  ).length}
+                : localTodos.filter(t => (f === 'active' ? !t.Completed : t.Completed)).length}
               )
             </button>
           ))}
@@ -249,20 +239,20 @@ export default function TodoComponent() {
               type="text"
               placeholder="Task Title"
               value={newTitle}
-              onChange={(e) => setNewTitle(e.target.value)}
+              onChange={e => setNewTitle(e.target.value)}
               className="w-full px-3 py-2 border border-input rounded-md mb-4 bg-background"
             />
             <textarea
               placeholder="Task Description"
               value={newDescription}
-              onChange={(e) => setNewDescription(e.target.value)}
+              onChange={e => setNewDescription(e.target.value)}
               className="w-full px-3 py-2 border border-input rounded-md mb-4 bg-background h-32 resize-none"
             />
             <button
               onClick={addTodo}
               className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md transition-colors duration-200"
             >
-              Add Task
+              {isCreating ? 'Adding...' : 'Add Task'}
             </button>
           </div>
         </div>
@@ -289,6 +279,7 @@ export default function TodoComponent() {
         </div>
       )}
 
+      {/* Edit Todo Modal */}
       {editTodo && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-6 rounded-lg w-full max-w-md">
@@ -304,27 +295,23 @@ export default function TodoComponent() {
             <input
               type="text"
               value={editTodo.Title}
-              onChange={(e) =>
-                setEditTodo({ ...editTodo, Title: e.target.value })
-              }
+              onChange={e => setEditTodo({ ...editTodo, Title: e.target.value })}
               className="w-full px-3 py-2 border border-input rounded-md mb-4 bg-background"
             />
             <textarea
               value={editTodo.Description}
-              onChange={(e) =>
-                setEditTodo({ ...editTodo, Description: e.target.value })
-              }
+              onChange={e => setEditTodo({ ...editTodo, Description: e.target.value })}
               className="w-full px-3 py-2 border border-input rounded-md mb-4 bg-background h-32 resize-none"
             />
             <button
               onClick={handleEditSave}
               className="w-full bg-yellow-500 hover:bg-yellow-600 text-white py-2 px-4 rounded-md"
             >
-              {isUpdating ? "Updating..." : "Update Task"}
+              {isUpdating ? 'Updating...' : 'Update Task'}
             </button>
           </div>
         </div>
       )}
     </div>
-  );
+  )
 }
