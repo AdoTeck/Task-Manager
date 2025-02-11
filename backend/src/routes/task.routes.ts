@@ -1,9 +1,9 @@
-import express, { Router } from 'express';
-import { TaskController } from '../controllers/task.controller';
+import express from 'express';
+import { createTaskController } from '../controllers/task.controller';
+import { validateProjectTask } from '../middleware/taskaccess.middleware';
 
-const router: Router = express.Router();
-const taskController = new TaskController();
+const router = express.Router();
 
-router.get('/', taskController.getAllTasks);
+router.post('/createtask', validateProjectTask , createTaskController );
 
-export { router };
+export default router;

@@ -15,6 +15,15 @@ export interface ITodo extends mongoose.Document {
     Description: string;
     Completed: boolean;
 }
+export interface ITask extends mongoose.Document {
+  ProjectID: mongoose.Types.ObjectId;
+  Title: string;
+  Description: string;
+  Status: "Pending" | "In Progress" | "Completed"; 
+  Deadline: Date;
+  PriorityLevel: "Low" | "Medium" | "High"; 
+  EstimateTime: number; 
+}
 
 export interface IUser extends mongoose.Document {
   userName: string;
