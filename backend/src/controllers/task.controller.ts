@@ -11,7 +11,7 @@ export const createTaskController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const projectID = req.body.ProjectID; // Ensure the correct field name is used
+    const { projectID } = req.params; // Ensure the correct field name is used
     if (!projectID) {
       res.status(401).json({ error: "Project Not Found" });
       return;

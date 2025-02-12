@@ -7,8 +7,7 @@ export const validateProjectTask = async (
   next: NextFunction
 ) => {
   try {
-    const projectID =
-      req.body.ProjectID || req.params.ProjectID || req.query.ProjectID;
+    const { projectID } = req.params;
       
     if (!projectID) {
       res.status(400).json({ error: "Project ID is required" });

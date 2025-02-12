@@ -1,11 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
-import todoReducer from '../slices/todo'
-import { api } from '../slices/apiSlice'
+import { api } from '../slices/TodoSlice'
+import { taskApi } from '../slices/TaskSlice'
 
 export const store = configureStore({
   reducer: {
-    todo: todoReducer,
     [api.reducerPath]: api.reducer,
+    [taskApi.reducerPath]: taskApi.reducer,
+
   },
   middleware: getDefaultMiddleware => getDefaultMiddleware().concat(api.middleware), // Add API middleware
 })

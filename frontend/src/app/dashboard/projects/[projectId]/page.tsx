@@ -6,6 +6,7 @@ import TaskList from '@/components/Task/TaskList'
 import AddTaskModal from '@/components/Task/AddTaskModal'
 import TaskDetailsModal from '@/components/Task/TaskDetailsModal'
 import type { Task } from '@/types'
+import { useCreateTaskMutation } from '@/redux/slices/TaskSlice'
 
 export default function TaskManager() {
   const [tasks, setTasks] = useState<Task[]>([
@@ -45,13 +46,28 @@ export default function TaskManager() {
       completed: true,
     },
   ])
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [createTask, { isLoading: isCreating }] = useCreateTaskMutation();
 
-  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
-  const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false)
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
-
-  const addTask = (newTask: Omit<Task, 'id' | 'completed'>) => {
-    setTasks([...tasks, { ...newTask, id: Date.now(), completed: false }])
+  console.log(createTask);
+  const addTask = async (newTask: Omit<Task, 'id' | 'completed'>) => {
+    try {
+      const projectId = 'your_project_id'; // Replace with actual project ID
+      const taskData = {
+        Title: newTask.Title,
+        Description: newTask.Description,
+        Status: 'Pending', // Default status
+        PriorityLevel: 'Medium', // Default priority level
+        Deadline: newTask.Deadline,
+        EstimateTime: '2', // Default estimate time
+      };
+      const response = await createTask({ projectId, taskData }).unwrap();
+      setTasks([...tasks, { ...newTask, id: Date.now(), completed: false }]);
+    } catch (error) {
+      console.error('Failed to create task:', error);
+    }
   }
 
   const toggleTask = (id: number) => {
