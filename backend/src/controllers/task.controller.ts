@@ -1,12 +1,12 @@
 import { Request, Response } from "express";
-import {CreateTaskService } from "../services/task.service"
+import { CreateTaskService } from "../services/task.service";
 
 export const createTaskController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const projectID = req.body.projectID?.id; // Get the user ID from the request
+    const projectID = req.body.ProjectID; // Ensure the correct field name is used
     if (!projectID) {
       res.status(401).json({ error: "Project Not Found" });
       return;
