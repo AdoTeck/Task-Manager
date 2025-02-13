@@ -32,7 +32,7 @@ export const CreateTaskService = async (userData: ITask, projectID: string) => {
 };
 
 export const GetTaskService = async (projectID: string) => {
-  const tasks = await Task.find({ projectID }).select(
+  const tasks = await Task.find({ ProjectID: projectID }).select(
     "Title Description Status Deadline PriorityLevel EstimateTime"
   );
   return tasks;

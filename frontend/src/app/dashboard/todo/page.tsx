@@ -7,7 +7,7 @@ import {
   useGetTodoQuery,
   useDeleteTodoMutation,
   useUpdateTodoMutation,
-} from '@/redux/slices/apiSlice'
+} from '@/redux/slices/TodoSlice'
 
 interface Todo {
   _id: string

@@ -1,11 +1,11 @@
 import { Eye, Trash2, Check, X } from 'lucide-react'
-import type { Task } from '../../types'
+import type { Task } from '@/types'
 
 interface TaskListProps {
   title: string
   tasks: Task[]
-  onToggle: (id: number) => void
-  onDelete: (id: number) => void
+  onToggle: (id: string) => void
+  onDelete: (id: string) => void
   onViewDetails: (task: Task) => void
 }
 

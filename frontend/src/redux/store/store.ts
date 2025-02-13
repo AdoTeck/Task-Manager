@@ -8,7 +8,8 @@ export const store = configureStore({
     [taskApi.reducerPath]: taskApi.reducer,
 
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(api.middleware), // Add API middleware
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware().concat(api.middleware, taskApi.middleware), // Added taskApi.middleware
 })
 
 export type RootState = ReturnType<typeof store.getState>

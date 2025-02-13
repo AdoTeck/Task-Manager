@@ -1,87 +1,57 @@
 'use client'
 
 import { useState } from 'react'
+import { useParams } from 'next/navigation'
 import { PlusCircle, ChevronDown } from 'lucide-react'
 import TaskList from '@/components/Task/TaskList'
 import AddTaskModal from '@/components/Task/AddTaskModal'
 import TaskDetailsModal from '@/components/Task/TaskDetailsModal'
 import type { Task } from '@/types'
-import { useCreateTaskMutation } from '@/redux/slices/TaskSlice'
+import { useGetTaskQuery, useDeleteTaskMutation } from '@/redux/slices/TaskSlice'
 
 export default function TaskManager() {
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: 1,
-      title: 'Design UI',
-      description: 'Create wireframes and mockups for the new dashboard',
-      dueTime: '2023-08-15T14:00',
-      completed: false,
-    },
-    {
-      id: 2,
-      title: 'Implement backend',
-      description: 'Set up Express.js server and MongoDB database',
-      dueTime: '2023-08-20T17:00',
-      completed: false,
-    },
-    {
-      id: 3,
-      title: 'Write tests',
-      description: 'Create unit and integration tests for core functionalities',
-      dueTime: '2023-08-25T12:00',
-      completed: true,
-    },
-    {
-      id: 4,
-      title: 'Deploy application',
-      description: 'Set up CI/CD pipeline and deploy to production',
-      dueTime: '2023-08-28T09:00',
-      completed: false,
-    },
-    {
-      id: 5,
-      title: 'User testing',
-      description: 'Conduct user testing sessions and gather feedback',
-      dueTime: '2023-08-30T15:00',
-      completed: true,
-    },
-  ])
-  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
-  const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  const [createTask, { isLoading: isCreating }] = useCreateTaskMutation();
+  const { projectId } = useParams<{ projectId: string }>()
+  // Extract refetch from useGetTaskQuery
+  const { data: apiResponse, isLoading, error, refetch } = useGetTaskQuery(
+    { projectId: projectId || '' },
+    { skip: !projectId }
+  )
 
-  console.log(createTask);
-  const addTask = async (newTask: Omit<Task, 'id' | 'completed'>) => {
-    try {
-      const projectId = 'your_project_id'; // Replace with actual project ID
-      const taskData = {
-        Title: newTask.Title,
-        Description: newTask.Description,
-        Status: 'Pending', // Default status
-        PriorityLevel: 'Medium', // Default priority level
-        Deadline: newTask.Deadline,
-        EstimateTime: '2', // Default estimate time
-      };
-      const response = await createTask({ projectId, taskData }).unwrap();
-      setTasks([...tasks, { ...newTask, id: Date.now(), completed: false }]);
-    } catch (error) {
-      console.error('Failed to create task:', error);
-    }
-  }
+  // Map API response to local Task structure
+  const tasks: Task[] = apiResponse?.task.map(task => ({
+    id: task._id, // assuming TaskList can use string ids
+    title: task.Title,
+    description: task.Description,
+    dueTime: task.Deadline,
+    completed: task.Status === 'Completed'
+  })) || []
+
+  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false)
+  const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false)
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null)
+  const [deleteTaskMutation] = useDeleteTaskMutation()
 
   const toggleTask = (id: number) => {
     setTasks(tasks.map(task => (task.id === id ? { ...task, completed: !task.completed } : task)))
   }
 
-  const deleteTask = (id: number) => {
-    setTasks(tasks.filter(task => task.id !== id))
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      await deleteTaskMutation({ projectId: projectId || '', taskId }).unwrap()
+      refetch()
+    } catch (error) {
+      console.error('Failed to delete task:', error)
+    }
   }
 
   const openTaskDetails = (task: Task) => {
     setSelectedTask(task)
     setIsTaskDetailsModalOpen(true)
   }
+
+  if (isLoading) return <div>Loading...</div>
+  if (error) return <div>Error loading tasks.</div>
+
 
   return (
     <div className="min-h-screen bg-[#e5e7eb] text-foreground p-4 md:p-8">
@@ -106,21 +76,21 @@ export default function TaskManager() {
             title="All Tasks"
             tasks={tasks}
             onToggle={toggleTask}
-            onDelete={deleteTask}
+            onDelete={handleDeleteTask}
             onViewDetails={openTaskDetails}
           />
           <TaskList
             title="Pending Tasks"
-            tasks={tasks.filter(task => !task.completed)}
+            tasks={tasks.filter(task => !task.Status)}
             onToggle={toggleTask}
-            onDelete={deleteTask}
+            onDelete={handleDeleteTask}
             onViewDetails={openTaskDetails}
           />
           <TaskList
             title="Completed Tasks"
-            tasks={tasks.filter(task => task.completed)}
+            tasks={tasks.filter(task => task.Status)}
             onToggle={toggleTask}
-            onDelete={deleteTask}
+            onDelete={handleDeleteTask}
             onViewDetails={openTaskDetails}
           />
         </div>
@@ -134,7 +104,8 @@ export default function TaskManager() {
         <AddTaskModal
           isOpen={isAddTaskModalOpen}
           onClose={() => setIsAddTaskModalOpen(false)}
-          onAddTask={addTask}
+          projectId={projectId}
+          onTaskAdded={refetch}
         />
 
         <TaskDetailsModal

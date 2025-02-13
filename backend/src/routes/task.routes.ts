@@ -10,8 +10,8 @@ import { validateProjectTask } from "../middleware/taskaccess.middleware";
 const router = express.Router();
 
 router.post("/createtask/:projectID", validateProjectTask, createTaskController);
-router.get("/gettask", validateProjectTask, getTaskController);
-router.put("/updatetask/:taskId", validateProjectTask, updateTaskController);
-router.delete("/deletetask/:taskId", validateProjectTask, deleteTaskController);
+router.get("/gettask/:projectID", validateProjectTask, getTaskController);
+router.put("/updatetask/:projectID/:taskId", validateProjectTask, updateTaskController);
+router.delete("/deletetask/:projectID/:taskId", validateProjectTask, deleteTaskController);
 
 export default router;

@@ -19,6 +19,7 @@ interface CreateTaskRequest {
 }
 interface CreateTaskPayload {
     projectId: string;
+    taskId: string;
     taskData: CreateTaskRequest;
 }
 interface ApiResponse {
@@ -38,8 +39,18 @@ export const taskApi = createApi({
                 method: 'POST',
                 body: taskData
             })
+        }),
+        getTask :  builder.query<ApiResponse, CreateTaskPayload>({
+            query: ({ projectId}) => `/gettask/${projectId}`,
+            
+        }),
+        deleteTask : builder.mutation<ApiResponse, { projectId: string; taskId: string }>({
+            query: ({ projectId, taskId }) => ({
+                url: `/deletetask/${projectId}/${taskId}`,
+                method: 'DELETE'
+        })
         })
     }),
 })
 
-export const { useCreateTaskMutation } = taskApi;
+export const { useCreateTaskMutation, useGetTaskQuery, useDeleteTaskMutation } = taskApi;

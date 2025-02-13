@@ -28,7 +28,7 @@ export const getTaskController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const projectID = req.body.ProjectID;
+    const { projectID } = req.params;
     if (!projectID) {
       res.status(401).json({ error: "Project Not Found" });
       return;
@@ -45,7 +45,7 @@ export const updateTaskController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const projectID = req.body.ProjectID;
+    const { projectID } = req.params;
     const { taskId } = req.params;
     if (!projectID) {
       res.status(401).json({ error: "Project Not Found" });
@@ -63,14 +63,14 @@ export const deleteTaskController = async (
   res: Response
 ): Promise<void> => {
   try {
-    const projectID = req.body.ProjectID;
+    const { projectID } = req.params;
     const { taskId } = req.params;
     if (!projectID) {
       res.status(401).json({ error: "Project Not Found" });
       return;
     }
     const task = await DeleteTaskService(taskId);
-    res.status(200).json({ message: "Task fetched successfully", task });
+    res.status(200).json({ message: "Task Deleted successfully", task });
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
