@@ -49,8 +49,15 @@ export const taskApi = createApi({
                 url: `/deletetask/${projectId}/${taskId}`,
                 method: 'DELETE'
         })
+        }),
+        updateTask : builder.mutation<ApiResponse, CreateTaskPayload>({
+            query: ({ projectId, taskId, taskData }) => ({
+                url: `/updatetask/${projectId}/${taskId}`,
+                method: 'PUT',
+                body: taskData
         })
+    }),
     }),
 })
 
-export const { useCreateTaskMutation, useGetTaskQuery, useDeleteTaskMutation } = taskApi;
+export const { useCreateTaskMutation, useGetTaskQuery, useDeleteTaskMutation, useUpdateTaskMutation } = taskApi;
