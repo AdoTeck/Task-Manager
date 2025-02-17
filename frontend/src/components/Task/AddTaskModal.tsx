@@ -2,15 +2,15 @@ import { useState } from 'react'
 import { useCreateTaskMutation } from '@/redux/slices/TaskSlice'
 import type { Task } from '@/types'
 
-// Added projectId and onTaskAdded props
+// Changed prop from onTaskAdded to refetchTasks
 interface AddTaskModalProps {
   isOpen: boolean
   onClose: () => void
   projectId: string
-  onTaskAdded?: () => void
+  refetchTasks?: () => void
 }
 
-export default function AddTaskModal({ isOpen, onClose, projectId, onTaskAdded }: AddTaskModalProps) {
+export default function AddTaskModal({ isOpen, onClose, projectId, refetchTasks }: AddTaskModalProps) {
   const [newTask, setNewTask] = useState<Omit<Task, 'id'>>({
     Title: '',
     Description: '',
@@ -36,8 +36,8 @@ export default function AddTaskModal({ isOpen, onClose, projectId, onTaskAdded }
           EstimateTime: 0,
         })
         onClose()
-        // Trigger refetch/reload after task addition
-        onTaskAdded && onTaskAdded()
+        // Trigger refetch/reload after task addition.
+        refetchTasks && refetchTasks()
       } catch (error) {
         console.error('Failed to create task:', error)
       }

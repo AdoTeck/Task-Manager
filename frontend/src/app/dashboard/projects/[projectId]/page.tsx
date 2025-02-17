@@ -7,7 +7,7 @@ import TaskList from '@/components/Task/TaskList'
 import AddTaskModal from '@/components/Task/AddTaskModal'
 import TaskDetailsModal from '@/components/Task/TaskDetailsModal'
 import type { Task } from '@/types'
-import { useGetTaskQuery, useDeleteTaskMutation } from '@/redux/slices/TaskSlice'
+import { useGetTaskQuery, useDeleteTaskMutation, useUpdateTaskMutation } from '@/redux/slices/TaskSlice'
 import EditTaskModal from '@/components/Task/EditTaskModal'
 
 export default function TaskManager() {
@@ -41,9 +41,29 @@ export default function TaskManager() {
   const [isTaskDetailsModalOpen, setIsTaskDetailsModalOpen] = useState(false)
   const [selectedTask, setSelectedTask] = useState<Task | null>(null)
   const [deleteTaskMutation] = useDeleteTaskMutation()
+  const [updateTask] = useUpdateTaskMutation()
 
-  const toggleTask = (id: number) => {
-    setTasks(tasks.map(task => (task.id === id ? { ...task, completed: !task.completed } : task)))
+  const toggleTask = async (id: string) => {
+    const task = tasks.find(t => t.id === id)
+    if (!task) return
+    const updatedStatus = task.Status === 'Completed' ? 'Pending' : 'Completed'
+    try {
+      await updateTask({
+        projectId: projectId || '',
+        taskId: id,
+        taskData: {
+          Title: task.Title,
+          Description: task.Description,
+          Status: updatedStatus,
+          Deadline: task.Deadline,
+          PriorityLevel: task.PriorityLevel,
+          EstimateTime: task.EstimateTime.toString(),
+        }
+      }).unwrap()
+      refetch()
+    } catch (error) {
+      console.error('Failed to update task status:', error)
+    }
   }
 
   const handleEditTask = (task: Task) => {
@@ -69,6 +89,7 @@ export default function TaskManager() {
   if (error) return <div className="text-destructive">Error loading tasks.</div>
 
   return (
+
     <div className="min-h-screen bg-background text-foreground p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="bg-card rounded-xl shadow-md mb-8 p-6">
@@ -127,17 +148,15 @@ export default function TaskManager() {
           isOpen={isEditTaskModalOpen}
           onClose={() => setIsEditTaskModalOpen(false)}
           task={selectedTaskForEdit}
-          projectId={projectId}
-          onTaskUpdated={refetch}
+          projectId={projectId || ''}
+          refetchTasks={refetch}
         />
-
         <AddTaskModal
           isOpen={isAddTaskModalOpen}
           onClose={() => setIsAddTaskModalOpen(false)}
-          projectId={projectId}
-          onTaskAdded={refetch}
+          projectId={projectId || ''}
+          refetchTasks={refetch}
         />
-
         <TaskDetailsModal
           isOpen={isTaskDetailsModalOpen}
           onClose={() => setIsTaskDetailsModalOpen(false)}
