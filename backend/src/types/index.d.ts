@@ -30,5 +30,5 @@ export interface IUser extends mongoose.Document {
   fullName: string;
   email: string;
   password: string;
- 
+  refecode : string;
 }

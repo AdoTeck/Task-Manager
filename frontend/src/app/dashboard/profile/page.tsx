@@ -1,11 +1,11 @@
 'use client'
 import Link from 'next/link'
-import { ChevronLeft, User, Mail, Lock, Bell, Upload, CheckCircle } from 'lucide-react'
+import { ChevronLeft, User, Mail, Lock, Bell, Upload, CheckCircle, Link2 } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
 
 export default function ProfilePage() {
   const [showSuccess, setShowSuccess] = useState(false)
-  const [profile, setProfile] = useState({ fullName: '', email: '', totalProjects: 0 })
+  const [profile, setProfile] = useState({ fullName: '', email: '', totalProjects: 0, refecode: '' })
   const fullNameRef = useRef<HTMLInputElement>(null)
   const newPasswordRef = useRef<HTMLInputElement>(null)
   const confirmPasswordRef = useRef<HTMLInputElement>(null)
@@ -14,7 +14,7 @@ export default function ProfilePage() {
     // Fetch user profile details
     fetch('http://localhost:5000/api/auth/profile', {
       method: 'GET',
-      credentials: 'include', // Ensure cookies are sent with the request
+      credentials: 'include', 
     })
       .then(response => response.json())
       .then(data => {
@@ -197,6 +197,20 @@ export default function ProfilePage() {
                       className="w-full px-4 py-2.5 rounded-lg border border-input bg-card focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-all pr-10"
                     />
                     <Lock className="h-5 w-5 text-muted-foreground absolute right-3 top-3" />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-muted-foreground mb-2">
+                    Referral Code
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={profile.refecode}
+                      disabled
+                      className="w-full px-4 py-2.5 rounded-lg border border-input bg-card opacity-75 cursor-not-allowed pr-10"
+                    />
+                    <Link2 className="h-5 w-5 text-muted-foreground absolute right-3 top-3" />
                   </div>
                 </div>
               </div>

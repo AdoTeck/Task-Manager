@@ -22,10 +22,11 @@ export const registerUser = async (userData: IUser) => {
     fullName,
     email,
     password: hashedPassword,
+    refecode : Math.random().toString(36).substring(2, 8)
   });
 
   await newUser.save();
-  return { id: newUser._id, userName: newUser.userName, email: newUser.email };
+  return { id: newUser._id, userName: newUser.userName, email: newUser.email, referenaceCode: newUser.refecode };
 };
 
 export const loginUser = async (email: string, password: string) => {
@@ -56,12 +57,12 @@ export const loginUser = async (email: string, password: string) => {
 };
 
 export const getUserProfileService = async (userId: string) => {
-  const user = await User.findById(userId).select("fullName email");
+  const user = await User.findById(userId).select("fullName email refecode");
   if (!user) {
     throw new Error("User not found");
   }
   const totalProjects = await Projects.countDocuments({ User: userId });
-  return { user, totalProjects };
+  return { user, totalProjects, refecode: user.refecode };
 };
 
 export const updateUserProfileService = async (userId: string, updates: Partial<IUser>) => {

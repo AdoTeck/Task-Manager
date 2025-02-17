@@ -31,6 +31,12 @@ const userSchema = new Schema<IUser>(
       minlength: 8,
       maxlength: 128,
     },
+    refecode : {
+      type: String,
+      required: true,
+      minlength: 6,
+      maxlength: 6,
+    }
   },
   {
     timestamps: true,
