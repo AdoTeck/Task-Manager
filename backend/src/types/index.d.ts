@@ -32,3 +32,16 @@ export interface IUser extends mongoose.Document {
   password: string;
   refecode : string;
 }
+
+interface IUserInfo {
+  userID: Types.ObjectId;
+  role: string;
+  projectID: Types.ObjectId;
+  isApproved: boolean;
+  permissions: "Editor" | "Viewer" | "Maintainer";
+}
+
+export interface IProjectAccess {
+  parentUser?: Types.ObjectId;
+  userInfo: IUserInfo[];
+}
