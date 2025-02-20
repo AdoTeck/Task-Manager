@@ -1,78 +1,86 @@
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+"use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { connectSocket, getSocket } from "@/utils/socketService"; // Importing the socket service
 import {
   Bell,
-  Search,
   ChevronDown,
   User,
   Menu,
   CheckCircle,
   AlertTriangle,
   Info,
-} from 'lucide-react'
+} from "lucide-react";
 
 interface NavbarProps {
-  toggleSidebar: () => void
+  toggleSidebar: () => void;
 }
 
 export default function Navbar({ toggleSidebar }: NavbarProps) {
-  const [isProfileOpen, setIsProfileOpen] = useState(false)
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false)
-  const router = useRouter()
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const router = useRouter();
 
-  // Mock notifications data
-  const [notifications] = useState([
-    {
-      id: 1,
-      type: 'success',
-      title: 'Task completed',
-      message: 'Design homepage task marked as completed',
-      time: '2h ago',
-    },
-    {
-      id: 2,
-      type: 'warning',
-      title: 'Deadline approaching',
-      message: 'Marketing project deadline in 3 days',
-      time: '4h ago',
-    },
-    {
-      id: 3,
-      type: 'info',
-      title: 'New assignment',
-      message: "You've been assigned to the mobile app project",
-      time: '1d ago',
-    },
-  ])
+  useEffect(() => {
+    const userId = "user_id_here"; // Replace with actual logged-in user's ID
+    connectSocket(userId); // Ensure the socket is initialized
+    const socket = getSocket();
+    
+    socket.on("request_status_update", (data) => {
+      setNotifications((prev) => [...prev, {
+        id: Date.now(),
+        type: data.status === "approved" ? "success" : "warning",
+        title: "Access Request Update",
+        message: `Your access request was ${data.status}`,
+        time: "Just now",
+      }]);
+    });
+  
+    return () => {
+      socket.off("request_status_update");
+    };
+  }, []);
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      })
+      const response = await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+      });
 
       if (response.ok) {
-        router.push('/login')
+        router.push("/login");
       } else {
-        throw new Error('Logout failed')
+        throw new Error("Logout failed");
       }
     } catch (error) {
-      console.error('Logout error:', error)
-      // You might want to show an error message to the user here
+      console.error("Logout error:", error);
     }
-  }
+  };
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'success':
-        return <CheckCircle className="h-5 w-5 text-green-500" />
-      case 'warning':
-        return <AlertTriangle className="h-5 w-5 text-yellow-500" />
+      case "success":
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      case "warning":
+        return <AlertTriangle className="h-5 w-5 text-yellow-500" />;
+      case "request":
+        return <Info className="h-5 w-5 text-blue-500" />;
       default:
-        return <Info className="h-5 w-5 text-blue-500" />
+        return <Info className="h-5 w-5 text-blue-500" />;
     }
-  }
+  };
+
+  const handleAcceptRequest = (id: number, requestId: string, ownerId: string) => {
+    getSocket().emit("respond_request", { requestId, ownerId, response: "approved" });
+    setNotifications(notifications.filter((notification) => notification.id !== id));
+  };
+
+  const handleDenyRequest = (id: number, requestId: string, ownerId: string) => {
+    getSocket().emit("respond_request", { requestId, ownerId, response: "denied" });
+    setNotifications(notifications.filter((notification) => notification.id !== id));
+  };
 
   return (
     <nav className="bg-white shadow-md">
@@ -112,7 +120,7 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                   </div>
 
                   <div className="max-h-96 overflow-y-auto">
-                    {notifications.map(notification => (
+                    {notifications.map((notification) => (
                       <div
                         key={notification.id}
                         className="px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0"
@@ -123,6 +131,24 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                             <h4 className="font-medium text-gray-900">{notification.title}</h4>
                             <p className="text-sm text-gray-600">{notification.message}</p>
                             <p className="text-xs text-gray-400 mt-1">{notification.time}</p>
+
+                            {/* Request Bar for Notifications Requiring Action */}
+                            {notification.type === "request" && (
+                              <div className="flex gap-2 mt-2">
+                                <button
+                                  onClick={() => handleAcceptRequest(notification.id, "requestId", "ownerId")}
+                                  className="px-3 py-1 text-sm bg-green-500 text-white rounded-md hover:bg-green-600"
+                                >
+                                  Accept
+                                </button>
+                                <button
+                                  onClick={() => handleDenyRequest(notification.id, "requestId", "ownerId")}
+                                  className="px-3 py-1 text-sm bg-red-500 text-white rounded-md hover:bg-red-600"
+                                >
+                                  Deny
+                                </button>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -172,5 +198,5 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
         </div>
       </div>
     </nav>
-  )
+  );
 }

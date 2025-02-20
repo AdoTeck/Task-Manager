@@ -1,4 +1,4 @@
-  import mongoose from 'mongoose';
+import mongoose, { Types } from 'mongoose';
 
 export interface IProject extends mongoose.Document {
   User: mongoose.Types.ObjectId;
@@ -44,4 +44,15 @@ interface IUserInfo {
 export interface IProjectAccess {
   parentUser?: Types.ObjectId;
   userInfo: IUserInfo[];
+}
+
+interface IAccessHistory {
+  requesterId: mongoose.Types.ObjectId;
+  ownerId: mongoose.Types.ObjectId;
+  status: "pending" | "approved" | "denied";
+  createdAt: Date;
+}
+
+export interface IAccessRequest extends mongoose.Document {
+  history: IAccessHistory[];
 }

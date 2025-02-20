@@ -1,6 +1,8 @@
 import express, { Express } from 'express';
 import dotenv from 'dotenv';
 import  { connectToDatabase } from './src/config/db';
+import http from "http";
+import { initializeSocket } from "./src/utils/sockets/socket";
 import cors from 'cors';
 
 // import { router as taskRoutes } from './src/routes/taskRoutes';
@@ -16,7 +18,9 @@ import { corsOptions } from './src/config/cors';
 dotenv.config();
 
 const app: Express = express();
+const server = http.createServer(app);
 
+initializeSocket(server);
 // Middleware
 app.use(express.json());
 app.use(cookieParser());

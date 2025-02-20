@@ -2,22 +2,23 @@
 // components/Users.tsx
 import { useState } from 'react'
 import {
-  Eye,
   X,
   Users,
   Plus,
   ClipboardList,
   ChevronRight,
   User,
-  Check,
   Briefcase,
 } from 'lucide-react'
+import toast, { Toaster } from 'react-hot-toast'
+
 
 interface User {
   id: string
   name: string
   email: string
   projects: Project[]
+  role: string
 }
 
 interface Project {
@@ -30,14 +31,25 @@ export default function UsersComponent() {
   const [showAddUserPopup, setShowAddUserPopup] = useState(false)
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
   const [selectedProjects, setSelectedProjects] = useState<string[]>([])
+  const [referenceCode, setReferenceCode] = useState('')
   const [users] = useState<User[]>([
     {
       id: '1',
       name: 'John Doe',
       email: 'john@taskmanager.com',
+      role: 'Developer',
       projects: [
         { id: 'p1', name: 'Marketing Campaign' },
         { id: 'p2', name: 'Product Launch' },
+      ],
+    },
+    {
+      id: '2',
+      name: 'Sarah Smith',
+      email: 'sarah@company.com',
+      role: 'Designer',
+      projects: [
+        { id: 'p3', name: 'Website Redesign' },
       ],
     },
     // Add more mock users as needed
@@ -61,8 +73,23 @@ export default function UsersComponent() {
     setSelectedProjects([])
   }
 
+  const handleReferenceCodeSubmit = async () => {
+    // Simulate API call
+    const response = await fetch(`http://localhost:5000/api/user/projects/user-access`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ referenceCode }),
+    })
+    const data = await response.json()
+    toast.success(`${JSON.stringify(data.message)}`)
+  }
+
   return (
     <div className="bg-white min-h-screen p-8">
+      <Toaster />
       <div className="max-w-6xl mx-auto">
         {/* Modified Header with Add Button */}
         <div className="mb-8 flex justify-between items-center">
@@ -82,27 +109,52 @@ export default function UsersComponent() {
           </button>
         </div>
 
-        {/* Users List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {users.map(user => (
-            <div
-              key={user.id}
-              className="bg-white border border-border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-lg font-semibold">{user.name}</h3>
-                  <p className="text-muted-foreground text-sm">{user.email}</p>
-                </div>
+        {/* Main Content */}
+        <div className="flex gap-8">
+          {/* Left Section - Reference Code Input */}
+          <div className="w-1/3">
+            <div className="bg-white border border-border rounded-lg p-6 shadow-sm">
+              <h2 className="text-xl font-bold mb-4">Add Reference Code</h2>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={referenceCode}
+                  onChange={(e) => setReferenceCode(e.target.value)}
+                  className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  placeholder="Enter reference code"
+                />
                 <button
-                  onClick={() => setSelectedUser(user)}
-                  className="p-2 text-muted-foreground hover:text-yellow-600 rounded-lg hover:bg-yellow-50"
+                  onClick={handleReferenceCodeSubmit}
+                  className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg"
                 >
-                  <Eye className="h-5 w-5" />
+                  Submit
                 </button>
               </div>
             </div>
-          ))}
+          </div>
+
+          {/* Right Section - Users List */}
+          <div className="w-2/3">
+            <div className="bg-white border border-border rounded-lg p-6 shadow-sm">
+              <h2 className="text-xl font-bold mb-4">Team Members</h2>
+              <div className="space-y-4">
+                {users.map(user => (
+                  <div key={user.id} className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-gray-50 transition-colors">
+                    <div>
+                      <h3 className="font-medium">{user.name}</h3>
+                      <p className="text-sm text-muted-foreground">{user.email}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground">Role: {user.role}</p>
+                      <p className="text-sm text-muted-foreground">
+                        Projects: {user.projects.map(p => p.name).join(', ')}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Details Popup */}
