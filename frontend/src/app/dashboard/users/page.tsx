@@ -1,5 +1,5 @@
 'use client'
-// components/Users.tsx
+
 import { useState } from 'react'
 import {
   X,
@@ -31,7 +31,7 @@ export default function UsersComponent() {
   const [showAddUserPopup, setShowAddUserPopup] = useState(false)
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
   const [selectedProjects, setSelectedProjects] = useState<string[]>([])
-  const [referenceCode, setReferenceCode] = useState('')
+  const [refecode, setRefeCode] = useState('')
   const [users] = useState<User[]>([
     {
       id: '1',
@@ -81,11 +81,14 @@ export default function UsersComponent() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ referenceCode }),
+      body: JSON.stringify({ refecode }),
     })
     const data = await response.json()
     toast.success(`${JSON.stringify(data.message)}`)
   }
+
+  
+
 
   return (
     <div className="bg-white min-h-screen p-8">
@@ -118,8 +121,8 @@ export default function UsersComponent() {
               <div className="flex gap-2">
                 <input
                   type="text"
-                  value={referenceCode}
-                  onChange={(e) => setReferenceCode(e.target.value)}
+                  value={refecode}
+                  onChange={(e) => setRefeCode(e.target.value)}
                   className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   placeholder="Enter reference code"
                 />

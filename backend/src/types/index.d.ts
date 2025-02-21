@@ -46,13 +46,11 @@ export interface IProjectAccess {
   userInfo: IUserInfo[];
 }
 
-interface IAccessHistory {
+export interface IAccessRequest extends mongoose.Document {
   requesterId: mongoose.Types.ObjectId;
   ownerId: mongoose.Types.ObjectId;
   status: "pending" | "approved" | "denied";
   createdAt: Date;
-}
-
-export interface IAccessRequest extends mongoose.Document {
-  history: IAccessHistory[];
+  isApproved: boolean;
+  isChecked: boolean;
 }
