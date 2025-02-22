@@ -157,7 +157,7 @@ export default function UsersComponent() {
               <div className="flex items-center justify-between p-6 border-b border-border">
                 <h2 className="text-2xl font-bold flex items-center gap-2">
                   <Users className="h-6 w-6 text-yellow-500" />
-                  {selectedUser.name}'s Projects
+                  {selectedUser.name}&apos;s Projects
                 </h2>
                 <button
                   onClick={() => setSelectedUser(null)}

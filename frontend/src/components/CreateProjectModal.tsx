@@ -47,9 +47,9 @@ export default function CreateProjectModal({ isOpen, onClose }: CreateProjectMod
       toast.success('Project Created Successfully')
       onClose()
       router.push('/dashboard/projects')
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error creating project:', error)
-      if (error.response?.status === 401) {
+      if ((error as { response?: { status?: number } }).response?.status === 401) {
         toast.error('Please login to create a project')
         router.push('/login')
       } else {

@@ -16,13 +16,13 @@ interface Todo {
   Completed: boolean
   createdAt: string
 }
-interface ApiResponse {
-  message: string
-  todo: Todo[]
-}
+// interface ApiResponse {
+//   message: string
+//   todo: Todo[]
+// }
 
 export default function TodoComponent() {
-  const { data: apiResponse, isLoading, error, refetch } = useGetTodoQuery<ApiResponse>()
+  const { data: apiResponse, isLoading, error, refetch } = useGetTodoQuery()
   const [createTodo, { isLoading: isCreating }] = useCreateTodoMutation()
   const [deleteTodoMutation] = useDeleteTodoMutation()
   const [updateTodo, { isLoading: isUpdating }] = useUpdateTodoMutation()
@@ -65,10 +65,15 @@ export default function TodoComponent() {
 
   const toggleTodo = async (id: string, completed: boolean) => {
     try {
-      await updateTodo({
-        _id: id,
-        Completed: !completed,
-      })
+      const todoToUpdate = localTodos.find(todo => todo._id === id)
+      if (todoToUpdate) {
+        await updateTodo({
+          _id: id,
+          Title: todoToUpdate.Title,
+          Description: todoToUpdate.Description,
+          Completed: !completed,
+        })
+      }
       refetch()
     } catch (error) {
       console.error('Failed to update todo:', error)

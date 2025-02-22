@@ -73,11 +73,6 @@ export default function ProjectsList() {
     )
   }
 
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' }
-    return new Date(dateString).toLocaleDateString(undefined, options)
-  }
-
   return (
     <>
       <div className="min-h-screen bg-[#e5e7eb] text-foreground p-4 md:p-8">

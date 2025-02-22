@@ -7,8 +7,8 @@ export default function MetricCard({
   className = '',
 }: {
   title: string
-  value: any
-  icon: any
+  value: string | number
+  icon: React.ComponentType<{ className?: string }>
   className?: string
 }) {
   return (

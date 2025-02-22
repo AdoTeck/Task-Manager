@@ -37,7 +37,9 @@ export default function EditTaskModal({
         }
         await updateTask({ projectId, taskId: editedTask.id, taskData }).unwrap()
         onClose()
-        onTaskUpdated && onTaskUpdated()
+        if (onTaskUpdated) {
+          onTaskUpdated()
+        }
       } catch (error) {
         console.error('Failed to update task:', error)
       }

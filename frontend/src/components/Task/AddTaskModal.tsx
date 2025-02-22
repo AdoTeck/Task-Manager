@@ -10,12 +10,7 @@ interface AddTaskModalProps {
   refetchTasks?: () => void
 }
 
-export default function AddTaskModal({
-  isOpen,
-  onClose,
-  projectId,
-  refetchTasks,
-}: AddTaskModalProps) {
+export default function AddTaskModal({ isOpen, onClose, projectId, refetchTasks }: AddTaskModalProps) {
   const [newTask, setNewTask] = useState<Omit<Task, 'id'>>({
     Title: '',
     Description: '',
@@ -31,7 +26,7 @@ export default function AddTaskModal({
     if (newTask.Title && newTask.Deadline) {
       try {
         const taskData = { ...newTask, EstimateTime: newTask.EstimateTime.toString() }
-        await createTask({ projectId, taskData }).unwrap()
+        await createTask({ projectId, taskId: '', taskData }).unwrap()
         setNewTask({
           Title: '',
           Description: '',
@@ -42,7 +37,9 @@ export default function AddTaskModal({
         })
         onClose()
         // Trigger refetch/reload after task addition.
-        refetchTasks && refetchTasks()
+        if (refetchTasks) {
+          refetchTasks();
+        }
       } catch (error) {
         console.error('Failed to create task:', error)
       }
@@ -80,12 +77,7 @@ export default function AddTaskModal({
         <select
           className="w-full p-2 mb-4 border rounded"
           value={newTask.Status}
-          onChange={e =>
-            setNewTask({
-              ...newTask,
-              Status: e.target.value as 'Pending' | 'In Progress' | 'Completed',
-            })
-          }
+          onChange={e => setNewTask({ ...newTask, Status: e.target.value as 'Pending' | 'In Progress' | 'Completed' })}
         >
           <option value="Pending">Pending</option>
           <option value="In Progress">In Progress</option>
@@ -106,9 +98,7 @@ export default function AddTaskModal({
         <select
           className="w-full p-2 mb-4 border rounded"
           value={newTask.PriorityLevel}
-          onChange={e =>
-            setNewTask({ ...newTask, PriorityLevel: e.target.value as 'Low' | 'Medium' | 'High' })
-          }
+          onChange={e => setNewTask({ ...newTask, PriorityLevel: e.target.value as 'Low' | 'Medium' | 'High' })}
         >
           <option value="Low">Low</option>
           <option value="Medium">Medium</option>

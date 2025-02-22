@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { PlusCircle, ChevronDown, ArrowLeft } from 'lucide-react'
+import { PlusCircle, ArrowLeft } from 'lucide-react'
 import TaskList from '@/components/Task/TaskList'
 import AddTaskModal from '@/components/Task/AddTaskModal'
 import TaskDetailsModal from '@/components/Task/TaskDetailsModal'
@@ -25,7 +25,7 @@ export default function TaskManager() {
     isLoading,
     error,
     refetch,
-  } = useGetTaskQuery({ projectId: projectId || '' }, { skip: !projectId })
+  } = useGetTaskQuery({ projectId: projectId || '', taskId: '', taskData: { Title: '', Description: '', Status: '', PriorityLevel: '', Deadline: '', EstimateTime: '' } }, { skip: !projectId })
 
   // Map API response to local Task structure
   const tasks: Task[] =
@@ -36,7 +36,7 @@ export default function TaskManager() {
       Status: task.Status,
       Deadline: task.Deadline,
       PriorityLevel: task.PriorityLevel,
-      EstimateTime: task.EstimateTime,
+      EstimateTime: Number(task.EstimateTime),
     })) || []
 
   // Filter tasks by status
@@ -155,7 +155,6 @@ export default function TaskManager() {
           onClose={() => setIsEditTaskModalOpen(false)}
           task={selectedTaskForEdit}
           projectId={projectId || ''}
-          refetchTasks={refetch}
         />
         <AddTaskModal
           isOpen={isAddTaskModalOpen}

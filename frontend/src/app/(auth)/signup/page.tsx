@@ -34,8 +34,12 @@ export default function SignupPage() {
       toast.success(data.message || 'Account created successfully!')
       setFormData({ userName: '', fullName: '', email: '', password: '' }) // Reset form
       router.push('/login')
-    } catch (error: any) {
-      toast.error(error.response?.data?.error || 'Signup failed')
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error) && error.response) {
+        toast.error(error.response.data?.error || 'Signup failed')
+      } else {
+        toast.error('Signup failed')
+      }
     } finally {
       setLoading(false)
     }

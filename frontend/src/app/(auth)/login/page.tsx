@@ -10,13 +10,22 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
-  const handleSubmit = async e => {
-    e.preventDefault()
-    setError('')
-    setIsLoading(true)
+  interface LoginFormElements extends HTMLFormControlsCollection {
+    email: HTMLInputElement;
+    password: HTMLInputElement;
+  }
 
-    const email = e.target.email.value
-    const password = e.target.password.value
+  interface LoginForm extends HTMLFormElement {
+    readonly elements: LoginFormElements;
+  }
+
+  const handleSubmit = async (e: React.FormEvent<LoginForm>) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+
+    const email = e.currentTarget.elements.email.value;
+    const password = e.currentTarget.elements.password.value;
 
     try {
       const response = await fetch('http://localhost:5000/api/auth/login', {
@@ -26,22 +35,22 @@ export default function LoginPage() {
         },
         body: JSON.stringify({ email, password }),
         credentials: 'include',
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed')
+        throw new Error(data.message || 'Login failed');
       }
 
       // Redirect to dashboard or home page
-      router.push('/dashboard')
+      router.push('/dashboard');
     } catch (error) {
-      setError(error.message)
+      setError((error as Error).message);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -131,7 +140,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/signup" className="text-yellow-500 hover:text-yellow-600 font-semibold">
               Sign up
             </Link>
