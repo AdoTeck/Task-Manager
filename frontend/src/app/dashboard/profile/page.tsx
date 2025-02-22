@@ -5,7 +5,12 @@ import { useState, useEffect, useRef } from 'react'
 
 export default function ProfilePage() {
   const [showSuccess, setShowSuccess] = useState(false)
-  const [profile, setProfile] = useState({ fullName: '', email: '', totalProjects: 0, refecode: '' })
+  const [profile, setProfile] = useState({
+    fullName: '',
+    email: '',
+    totalProjects: 0,
+    refecode: '',
+  })
   const fullNameRef = useRef<HTMLInputElement>(null)
   const newPasswordRef = useRef<HTMLInputElement>(null)
   const confirmPasswordRef = useRef<HTMLInputElement>(null)
@@ -14,7 +19,7 @@ export default function ProfilePage() {
     // Fetch user profile details
     fetch('http://localhost:5000/api/auth/profile', {
       method: 'GET',
-      credentials: 'include', 
+      credentials: 'include',
     })
       .then(response => response.json())
       .then(data => {

@@ -10,7 +10,13 @@ interface EditTaskModalProps {
   onTaskUpdated?: () => void
 }
 
-export default function EditTaskModal({ isOpen, onClose, task, projectId, onTaskUpdated }: EditTaskModalProps) {
+export default function EditTaskModal({
+  isOpen,
+  onClose,
+  task,
+  projectId,
+  onTaskUpdated,
+}: EditTaskModalProps) {
   const [editedTask, setEditedTask] = useState(task)
   const [updateTask, { isLoading }] = useUpdateTaskMutation()
 
@@ -95,7 +101,9 @@ export default function EditTaskModal({ isOpen, onClose, task, projectId, onTask
           type="number"
           className="w-full p-2 mb-4 border rounded"
           value={editedTask.EstimateTime}
-          onChange={e => setEditedTask({ ...editedTask, EstimateTime: parseInt(e.target.value) || 0 })}
+          onChange={e =>
+            setEditedTask({ ...editedTask, EstimateTime: parseInt(e.target.value) || 0 })
+          }
         />
         <div className="flex justify-end space-x-2">
           <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">

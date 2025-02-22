@@ -42,16 +42,14 @@ export default function TaskList({
       <h2 className="text-xl font-semibold text-gray-900 mb-4">{title}</h2>
       <div className="space-y-3">
         {tasks.map(task => (
-          <div 
-            key={task.id} 
+          <div
+            key={task.id}
             className="group bg-white rounded-lg border border-gray-200 p-3 hover:border-gray-300 transition-colors duration-200 relative"
           >
             <div className="flex items-center gap-3">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-medium text-gray-900 truncate">
-                    {task.Title}
-                  </h3>
+                  <h3 className="font-medium text-gray-900 truncate">{task.Title}</h3>
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => onViewDetails(task)}
@@ -78,19 +76,17 @@ export default function TaskList({
                 </div>
 
                 <div className="flex items-center gap-3 mt-1 text-sm">
-                  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(task.PriorityLevel)}`}>
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${getPriorityColor(task.PriorityLevel)}`}
+                  >
                     {task.PriorityLevel}
                   </span>
-                  <span className="text-gray-500">
-                    Due {formatDate(task.Deadline)}
-                  </span>
-                  <span className="text-gray-500">
-                    {task.EstimateTime}h
-                  </span>
+                  <span className="text-gray-500">Due {formatDate(task.Deadline)}</span>
+                  <span className="text-gray-500">{task.EstimateTime}h</span>
                 </div>
               </div>
             </div>
-            
+
             {/* Status Toggle Icon */}
             <button
               onClick={() => onToggle(task.id)}

@@ -1,8 +1,8 @@
 export interface Task {
-  Title: string,
-  Description: string,
-  Status: string,
-  Deadline: string,
-  PriorityLevel: string,
-  EstimateTime: number,
+  Title: string
+  Description: string
+  Status: string
+  Deadline: string
+  PriorityLevel: string
+  EstimateTime: number
 }

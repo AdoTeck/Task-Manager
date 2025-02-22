@@ -1,17 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  X,
-  Users,
-  Plus,
-  ClipboardList,
-  ChevronRight,
-  User,
-  Briefcase,
-} from 'lucide-react'
+import { X, Users, Plus, ClipboardList, ChevronRight, User, Briefcase } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
-
 
 interface User {
   id: string
@@ -48,9 +39,7 @@ export default function UsersComponent() {
       name: 'Sarah Smith',
       email: 'sarah@company.com',
       role: 'Designer',
-      projects: [
-        { id: 'p3', name: 'Website Redesign' },
-      ],
+      projects: [{ id: 'p3', name: 'Website Redesign' }],
     },
     // Add more mock users as needed
   ])
@@ -87,9 +76,6 @@ export default function UsersComponent() {
     toast.success(`${JSON.stringify(data.message)}`)
   }
 
-  
-
-
   return (
     <div className="bg-white min-h-screen p-8">
       <Toaster />
@@ -122,7 +108,7 @@ export default function UsersComponent() {
                 <input
                   type="text"
                   value={refecode}
-                  onChange={(e) => setRefeCode(e.target.value)}
+                  onChange={e => setRefeCode(e.target.value)}
                   className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
                   placeholder="Enter reference code"
                 />
@@ -142,7 +128,10 @@ export default function UsersComponent() {
               <h2 className="text-xl font-bold mb-4">Team Members</h2>
               <div className="space-y-4">
                 {users.map(user => (
-                  <div key={user.id} className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-gray-50 transition-colors">
+                  <div
+                    key={user.id}
+                    className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-gray-50 transition-colors"
+                  >
                     <div>
                       <h3 className="font-medium">{user.name}</h3>
                       <p className="text-sm text-muted-foreground">{user.email}</p>

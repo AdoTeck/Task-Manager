@@ -7,7 +7,11 @@ import TaskList from '@/components/Task/TaskList'
 import AddTaskModal from '@/components/Task/AddTaskModal'
 import TaskDetailsModal from '@/components/Task/TaskDetailsModal'
 import type { Task } from '@/types'
-import { useGetTaskQuery, useDeleteTaskMutation, useUpdateTaskMutation } from '@/redux/slices/TaskSlice'
+import {
+  useGetTaskQuery,
+  useDeleteTaskMutation,
+  useUpdateTaskMutation,
+} from '@/redux/slices/TaskSlice'
 import EditTaskModal from '@/components/Task/EditTaskModal'
 
 export default function TaskManager() {
@@ -15,22 +19,25 @@ export default function TaskManager() {
   const { projectId } = useParams<{ projectId: string }>()
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false)
   const [selectedTaskForEdit, setSelectedTaskForEdit] = useState<Task | null>(null)
- 
-  const { data: apiResponse, isLoading, error, refetch } = useGetTaskQuery(
-    { projectId: projectId || '' },
-    { skip: !projectId }
-  )
+
+  const {
+    data: apiResponse,
+    isLoading,
+    error,
+    refetch,
+  } = useGetTaskQuery({ projectId: projectId || '' }, { skip: !projectId })
 
   // Map API response to local Task structure
-  const tasks: Task[] = apiResponse?.task.map(task => ({
-    id: task._id,
-    Title: task.Title,
-    Description: task.Description,
-    Status: task.Status,
-    Deadline: task.Deadline,
-    PriorityLevel: task.PriorityLevel,
-    EstimateTime: task.EstimateTime
-  })) || []
+  const tasks: Task[] =
+    apiResponse?.task.map(task => ({
+      id: task._id,
+      Title: task.Title,
+      Description: task.Description,
+      Status: task.Status,
+      Deadline: task.Deadline,
+      PriorityLevel: task.PriorityLevel,
+      EstimateTime: task.EstimateTime,
+    })) || []
 
   // Filter tasks by status
   const allTasks = tasks
@@ -58,7 +65,7 @@ export default function TaskManager() {
           Deadline: task.Deadline,
           PriorityLevel: task.PriorityLevel,
           EstimateTime: task.EstimateTime.toString(),
-        }
+        },
       }).unwrap()
       refetch()
     } catch (error) {
@@ -89,7 +96,6 @@ export default function TaskManager() {
   if (error) return <div className="text-destructive">Error loading tasks.</div>
 
   return (
-
     <div className="min-h-screen bg-background text-foreground p-4 md:p-8">
       <div className="max-w-7xl mx-auto">
         <div className="bg-card rounded-xl shadow-md mb-8 p-6">

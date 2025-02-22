@@ -82,9 +82,7 @@ export default function NotificationComponent() {
                   className="px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-0"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="mt-1">
-                      {getNotificationIcon(notification.status)}
-                    </div>
+                    <div className="mt-1">{getNotificationIcon(notification.status)}</div>
                     <div className="flex-1">
                       <h4 className="font-medium text-gray-900">
                         {notification.isApproved === false ? 'Request Pending' : 'Request Approved'}

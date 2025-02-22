@@ -10,7 +10,12 @@ interface AddTaskModalProps {
   refetchTasks?: () => void
 }
 
-export default function AddTaskModal({ isOpen, onClose, projectId, refetchTasks }: AddTaskModalProps) {
+export default function AddTaskModal({
+  isOpen,
+  onClose,
+  projectId,
+  refetchTasks,
+}: AddTaskModalProps) {
   const [newTask, setNewTask] = useState<Omit<Task, 'id'>>({
     Title: '',
     Description: '',
@@ -75,7 +80,12 @@ export default function AddTaskModal({ isOpen, onClose, projectId, refetchTasks 
         <select
           className="w-full p-2 mb-4 border rounded"
           value={newTask.Status}
-          onChange={e => setNewTask({ ...newTask, Status: e.target.value as 'Pending' | 'In Progress' | 'Completed' })}
+          onChange={e =>
+            setNewTask({
+              ...newTask,
+              Status: e.target.value as 'Pending' | 'In Progress' | 'Completed',
+            })
+          }
         >
           <option value="Pending">Pending</option>
           <option value="In Progress">In Progress</option>
@@ -96,7 +106,9 @@ export default function AddTaskModal({ isOpen, onClose, projectId, refetchTasks 
         <select
           className="w-full p-2 mb-4 border rounded"
           value={newTask.PriorityLevel}
-          onChange={e => setNewTask({ ...newTask, PriorityLevel: e.target.value as 'Low' | 'Medium' | 'High' })}
+          onChange={e =>
+            setNewTask({ ...newTask, PriorityLevel: e.target.value as 'Low' | 'Medium' | 'High' })
+          }
         >
           <option value="Low">Low</option>
           <option value="Medium">Medium</option>
