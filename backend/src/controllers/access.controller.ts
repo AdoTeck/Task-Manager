@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { accessService , getNotificationData} from "../services/access.service"
+import { accessService , getNotificationService, updateNotificationService, addUserService} from "../services/access.service"
 
 export const accessController = async (req: Request, res: Response) => {
     try {
@@ -11,11 +11,31 @@ export const accessController = async (req: Request, res: Response) => {
     }
 } 
 
-export const getNotifiastionData = async (req: Request, res: Response) => {
+export const getNotifiastionController = async (req: Request, res: Response) => {
     try {
         const userId = req.user!.id;
-        const notificationData = await getNotificationData(userId);
+        const notificationData = await getNotificationService(userId);
         res.status(200).json({ message: "Notification data fetched successfully", notificationData });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+export const updateNotifiastionController = async (req: Request, res: Response) => {
+    try {
+        const userId = req.user!.id;
+        const notificationData = await updateNotificationService(userId, req.body);
+        res.status(200).json({ message: "Notification data updated successfully", notificationData });
+    } catch (error: any) {
+        res.status(400).json({ error: error.message });
+    }
+}
+
+export const addUserController = async (req: Request, res: Response) => {
+    try {
+        const userId = req.user!.id;
+        const userData = await addUserService(userId, req.body);
+        res.status(200).json({ message: "User Added successfully", userData });
     } catch (error: any) {
         res.status(400).json({ error: error.message });
     }
