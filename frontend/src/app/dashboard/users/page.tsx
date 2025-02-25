@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { X, Users, ClipboardList, ChevronRight, Edit, Trash2, Plus } from 'lucide-react'
+import { X, Users, Edit, Trash2, Plus } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
 
 interface User {
@@ -19,7 +19,6 @@ interface Project {
 }
 
 export default function UsersComponent() {
-  const [selectedUser, setSelectedUser] = useState<User | null>(null)
   const [refecode, setRefeCode] = useState('')
   const [filters, setFilters] = useState({
     user: '',
@@ -28,13 +27,6 @@ export default function UsersComponent() {
     permission: ''
   })
   const [editData, setEditData] = useState<User | null>(null)
-  const [newUser, setNewUser] = useState<Partial<User>>({
-    name: '',
-    email: '',
-    role: '',
-    projects: [],
-    permissions: []
-  })
   const [users, setUsers] = useState<User[]>([
     {
       id: '1',

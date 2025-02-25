@@ -1,4 +1,4 @@
-import mongoose, { Document } from "mongoose";
+import mongoose from "mongoose";
 import { IProject } from "../types/index";
 
 const ProjectSchema = new mongoose.Schema({

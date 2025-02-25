@@ -8,6 +8,7 @@ import authRoutes from './src/routes/auth.routes';
 import projects from './src/routes/project.routes';
 import todo from './src/routes/todo.routes';
 import task from './src/routes/task.routes';
+import userAcess from './src/routes/usersAccess.routes';
 import userProjects from './src/routes/userProjectAccess.routes';
 import { errorHandler } from './src/utils/errorHandler';
 import cookieParser from 'cookie-parser';
@@ -27,6 +28,7 @@ app.use("/api/projects", projects);
 app.use("/api/todo",todo);
 app.use("/api/task",task);
 app.use("/api/user/projects",userProjects);
+app.use("/api/userinfo",userAcess);
 
 // Error handling middleware
 app.use(errorHandler);
