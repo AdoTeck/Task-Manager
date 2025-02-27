@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { X, Users, Edit, Trash2, Plus } from 'lucide-react'
 import toast, { Toaster } from 'react-hot-toast'
 
@@ -18,8 +18,9 @@ interface Project {
   name: string
 }
 
-export default function UsersComponent() {
+export default function UsersComponent () {
   const [refecode, setRefeCode] = useState('')
+  const [userInfo, setUserInfo] = useState('')
   const [filters, setFilters] = useState({
     user: '',
     role: '',
@@ -46,6 +47,20 @@ export default function UsersComponent() {
   const permissions = ['Edit', 'View', 'Delete', 'Admin']
   const projects = ['Marketing Campaign', 'Product Launch', 'Website Redesign']
  
+  useEffect(() => {
+    const fetchNotifications = async () => {
+    const response = await fetch('http://localhost:5000/api/user/projects/notificationCheck',{
+      method: 'GET',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    const data = JSON.stringify(response)
+    setUserInfo(data)
+  }
+  fetchNotifications()
+  }, [])
   const handleDeleteUser = (userId: string) => {
     setUsers(users.filter(user => user.id !== userId))
     toast.success('User deleted successfully')

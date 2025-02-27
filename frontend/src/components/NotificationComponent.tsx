@@ -57,35 +57,37 @@ export default function NotificationComponent() {
     setRefreshTrigger(prev => prev + 1)
   }
 
-  const handleAcceptRequest = async () => {
+  const handleAcceptRequest = async (id: string) => {
     try {
       const response = await fetch('http://localhost:5000/api/user/projects/notificationCheck', {
-        method: 'PATCH',
+        method: 'PUT',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          notificationId: id,
           isApproved: true,
           isChecked: true,
           status: 'approved',
         }),
-      });
-  
+      })
+
       if (!response.ok) {
-        throw new Error('Failed to update notification');
+        throw new Error('Failed to update notification')
       }
-  
-      const updatedRequest = await response.json();
-      console.log('Notification updated:', updatedRequest);
-      
+
+      const updatedRequest = await response.json()
+      console.log('Notification updated:', updatedRequest)
+
       // Trigger refresh after accepting the request
       setRefreshTrigger(prev => prev + 1)
     } catch (error) {
-      console.error('Error handling request:', error);
+      console.error('Error handling request:', error)
     }
-  };
-  const handleDenyRequest = async () => {
+  }
+
+  const handleDenyRequest = async (id: string) => {
     try {
       const response = await fetch('http://localhost:5000/api/user/projects/notificationCheck', {
         method: 'PATCH',
@@ -94,25 +96,26 @@ export default function NotificationComponent() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          notificationId: id,
           isApproved: false,
           isChecked: true,
           status: 'denied',
         }),
-      });
-  
+      })
+
       if (!response.ok) {
-        throw new Error('Failed to update notification');
+        throw new Error('Failed to update notification')
       }
-  
-      const updatedRequest = await response.json();
-      console.log('Notification updated:', updatedRequest);
-      
+
+      const updatedRequest = await response.json()
+      console.log('Notification updated:', updatedRequest)
+
       // Trigger refresh after accepting the request
       setRefreshTrigger(prev => prev + 1)
     } catch (error) {
-      console.error('Error handling request:', error);
+      console.error('Error handling request:', error)
     }
-  };
+  }
 
   return (
     <div className="relative">
@@ -145,10 +148,10 @@ export default function NotificationComponent() {
                     <div className="mt-1">{getNotificationIcon(notification.status)}</div>
                     <div className="flex-1">
                       <h4 className="font-medium text-gray-900">
-                        {notification.status === "pending" ? 'Request Pending' : 'Request Approved'}
+                        {notification.status === 'pending' ? 'Request Pending' : 'Request Approved'}
                       </h4>
                       <p className="text-sm text-gray-600">
-                        {notification.status === "pending"
+                        {notification.status === 'pending'
                           ? 'Your request is pending approval.'
                           : 'Your request has been approved.'}
                       </p>
@@ -157,23 +160,23 @@ export default function NotificationComponent() {
                       </p>
                     </div>
                   </div>
-                 {/* Only show Accept/Deny buttons if status is pending */}
-{notification.status === "pending" && (
-  <div className="flex gap-2 mt-2">
-    <button
-      className="px-3 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600"
-      onClick={handleAcceptRequest}
-    >
-      Accept
-    </button>
-    <button
-      className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600"
-      onClick={handleDenyRequest}
-    >
-      Deny
-    </button>
-  </div>
-)}
+                  {/* Only show Accept/Deny buttons if status is pending */}
+                  {notification.status === 'pending' && (
+                    <div className="flex gap-2 mt-2">
+                      <button
+                        className="px-3 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600"
+                        onClick={() => handleAcceptRequest(notification._id)}
+                      >
+                        Accept
+                      </button>
+                      <button
+                        className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600"
+                        onClick={() => handleDenyRequest(notification._id)}
+                      >
+                        Deny
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))
             ) : (

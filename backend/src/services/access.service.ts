@@ -36,7 +36,7 @@ export const accessService = async (userId: string, userData: UserData) => {
 
 export const getNotificationService = async (userId: string) => {
     console.log(userId)
-    const accessRequests = await AccessRequest.find({ ownerId: userId, isApproved: false }).select("status isApproved isChecked createdAt");
+    const accessRequests = await AccessRequest.find({ ownerId: userId, status: "pending" }).select("_id requesterId status isApproved isChecked createdAt");
     if(!accessRequests)
     {
         throw new Error("No access requests found for the user.");
@@ -45,22 +45,10 @@ export const getNotificationService = async (userId: string) => {
     return accessRequests;
 }
 
-export const updateNotificationService = async (ownerId: string, userData: IAccessRequest) => {
-
-    const  {isApproved, isChecked, status } = userData;   
-    console.log(userData);
-    console.log(ownerId);
-       
-    if(!ownerId ){
-        throw new Error("User not found.");
-    }
-    const updatedRequest = await AccessRequest.findOneAndUpdate(
-        { ownerId: ownerId },  
-        { isApproved, isChecked, status },
-        { new: true } 
-    ); 
-    if(!updatedRequest){
-        throw new Error("Error updating access request.");
-    }
-    return updatedRequest;
-}
+export const updateNotificationService = async (userId: string, notificationId: string, updateValues: Partial<IAccessRequest>) => {
+    return await AccessRequest.findOneAndUpdate(
+        { _id: notificationId, ownerId: userId },
+        { $set: updateValues },
+        { new: true }
+    );
+};
