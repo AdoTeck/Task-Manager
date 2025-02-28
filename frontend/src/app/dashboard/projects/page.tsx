@@ -27,7 +27,7 @@ export default function ProjectsList() {
     const fetchProjects = async () => {
       try {
         const response = await fetch('http://localhost:5000/api/projects/getProjects', {
-          credentials: 'include', // Ensures HTTPOnly cookie is sent automatically
+          credentials: 'include', 
           headers: {
             'Content-Type': 'application/json',
           },

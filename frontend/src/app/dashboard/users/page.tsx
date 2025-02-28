@@ -20,13 +20,7 @@ interface Project {
 
 export default function UsersComponent () {
   const [refecode, setRefeCode] = useState('')
-  const [userInfo, setUserInfo] = useState('')
-  const [filters, setFilters] = useState({
-    user: '',
-    role: '',
-    project: '',
-    permission: ''
-  })
+  const [userInfo, setUserInfo] = useState<any[]>([])
   const [editData, setEditData] = useState<User | null>(null)
   const [users, setUsers] = useState<User[]>([
     {
@@ -43,24 +37,68 @@ export default function UsersComponent () {
     // ... other users
   ])
 
-  const roles = ['Developer', 'Designer', 'Manager', 'Viewer']
-  const permissions = ['Edit', 'View', 'Delete', 'Admin']
+  const roles = ["Admin", "Developer", "Manager", "Viewer", "Designer"];
+const permissions = ["Editor", "Viewer", "Maintainer"];
   const projects = ['Marketing Campaign', 'Product Launch', 'Website Redesign']
  
   useEffect(() => {
     const fetchNotifications = async () => {
-    const response = await fetch('http://localhost:5000/api/user/projects/notificationCheck',{
-      method: 'GET',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-    const data = JSON.stringify(response)
-    setUserInfo(data)
-  }
-  fetchNotifications()
-  }, [])
+      try {
+        const response = await fetch('http://localhost:5000/api/userinfo/user-data', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        if (!response.ok) {
+          throw new Error("Failed to fetch user data");
+        }
+  
+        const data = await response.json();
+        setUserInfo(data.userData);  // ✅ Store as an object, NOT a string
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
+    };
+  
+    fetchNotifications();
+  }, []);
+
+  console.log(userInfo)
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent page reload
+  
+    const formData = new FormData(e.target);
+    const data = Object.fromEntries(formData.entries()); // Convert FormData to an object
+    console.log(data);
+    const payload = { ...data, isApproved: true };
+    try {
+      const response = await fetch(`http://localhost:5000/api/user/projects/add-user`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        
+        body: JSON.stringify(payload), // Send form data as JSON
+      });
+  
+      const result = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to add user.");
+      }
+  
+      console.log("User added successfully:", result);
+      toast.success("User added successfully!");
+    } catch (error : any) {
+      console.error("Error:", error.message);
+      toast.error("Error adding user.");
+    }
+  };
+  
   const handleDeleteUser = (userId: string) => {
     setUsers(users.filter(user => user.id !== userId))
     toast.success('User deleted successfully')
@@ -119,71 +157,72 @@ export default function UsersComponent () {
         </div>
 
         {/* Filters Bar */}
-        <div className="bg-white border rounded-lg p-4 mb-6 shadow-sm">
-          <div className="grid grid-cols-5 gap-4 items-end">
-          <div>
-              <label className="text-sm font-medium text-gray-700">User</label>
-              <select
-                value={filters.user}
-                onChange={e => setFilters({...filters, user: e.target.value})}
-                className="w-full mt-1 px-3 py-2 border rounded-md focus:ring-yellow-500"
-              >
-                <option value="">All Users</option>
-                {users.map(user => (
-                  <option key={user.id} value={user.id}>{user.name}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700">Role</label>
-              <select
-                value={filters.role}
-                onChange={e => setFilters({...filters, role: e.target.value})}
-                className="w-full mt-1 px-3 py-2 border rounded-md focus:ring-yellow-500 focus:border-yellow-500"
-              >
-                <option value="">All Roles</option>
-                {roles.map(role => (
-                  <option key={role} value={role}>{role}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="text-sm font-medium text-gray-700">Project</label>
-              <select
-                value={filters.project}
-                onChange={e => setFilters({...filters, project: e.target.value})}
-                className="w-full mt-1 px-3 py-2 border rounded-md focus:ring-yellow-500 focus:border-yellow-500"
-              >
-                <option value="">All Projects</option>
-                {projects.map(project => (
-                  <option key={project} value={project}>{project}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-gray-700">Permission</label>
-              <select
-                value={filters.permission}
-                onChange={e => setFilters({...filters, permission: e.target.value})}
-                className="w-full mt-1 px-3 py-2 border rounded-md focus:ring-yellow-500 focus:border-yellow-500"
-              >
-                <option value="">All Permissions</option>
-                {permissions.map(permission => (
-                  <option key={permission} value={permission}>{permission}</option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <button
-                className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md flex items-center gap-2"
-              >
-                <Plus className="h-5 w-5" />
-                Add User
-              </button>
-            </div>
-          </div>
+        <form onSubmit={handleSubmit} className="bg-white border rounded-lg p-4 mb-6 shadow-sm">
+      <div className="grid grid-cols-5 gap-4 items-end">
+        {/* User Dropdown */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">User</label>
+          <select name="userID" className="w-full mt-1 px-3 py-2 border rounded-md focus:ring-yellow-500 focus:border-yellow-500">
+            <option value="">Select User</option>
+            {userInfo.map((item) => (
+              <option key={item._id} value={item._id}>
+                {item.fullName}
+              </option>
+            ))}
+          </select>
         </div>
+
+        {/* Role Dropdown (Static Roles) */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">Role</label>
+          <select name="role" className="w-full mt-1 px-3 py-2 border rounded-md focus:ring-yellow-500 focus:border-yellow-500">
+            <option value="">Select Role</option>
+            {roles.map((role) => (
+              <option key={role} value={role}>
+                {role}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Project Dropdown */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">Project</label>
+          <select name="projectID" className="w-full mt-1 px-3 py-2 border rounded-md focus:ring-yellow-500 focus:border-yellow-500">
+            <option value="">Select Project</option>
+            {userInfo.map((item) => (
+                <option key={item._id} value={item._id}>
+                  {item.ProjectTitle}
+                </option>
+              ))}
+          </select>
+        </div>
+
+        {/* Permission Dropdown (Static Permissions) */}
+        <div>
+          <label className="text-sm font-medium text-gray-700">Permission</label>
+          <select name="permission" className="w-full mt-1 px-3 py-2 border rounded-md focus:ring-yellow-500 focus:border-yellow-500">
+            <option value="">Select Permission</option>
+            {permissions.map((permission) => (
+              <option key={permission} value={permission}>
+                {permission}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Submit Button */}
+        <div>
+          <button
+            type="submit"
+            className="w-full px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-md flex items-center justify-center gap-2"
+          >
+            <Plus className="h-5 w-5" />
+            Add User
+          </button>
+        </div>
+      </div>
+    </form>
 
         {/* Users Table */}
         <div className="border rounded-lg shadow-sm">
