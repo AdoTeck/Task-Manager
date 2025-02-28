@@ -9,6 +9,7 @@ interface Notification {
   isApproved: boolean
   isChecked: boolean
   createdAt: string
+  requesterId: string
 }
 
 export default function NotificationComponent() {
@@ -57,7 +58,7 @@ export default function NotificationComponent() {
     setRefreshTrigger(prev => prev + 1)
   }
 
-  const handleAcceptRequest = async (id: string) => {
+  const handleAcceptRequest = async (id: string, userInfo: string) => {
     try {
       const response = await fetch('http://localhost:5000/api/user/projects/notificationCheck', {
         method: 'PUT',
@@ -79,6 +80,21 @@ export default function NotificationComponent() {
 
       const updatedRequest = await response.json()
       console.log('Notification updated:', updatedRequest)
+
+      const adduser = await fetch('http://localhost:5000/api/user/projects/add-user', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userID: userInfo,
+          isApproved: true
+        }),
+      })
+      if (!adduser.ok) {
+        throw new Error('Failed to update notification')
+      }
 
       // Trigger refresh after accepting the request
       setRefreshTrigger(prev => prev + 1)
@@ -165,7 +181,7 @@ export default function NotificationComponent() {
                     <div className="flex gap-2 mt-2">
                       <button
                         className="px-3 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600"
-                        onClick={() => handleAcceptRequest(notification._id)}
+                        onClick={() => handleAcceptRequest(notification._id, notification.requesterId)}
                       >
                         Accept
                       </button>

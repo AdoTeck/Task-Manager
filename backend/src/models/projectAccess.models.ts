@@ -1,10 +1,11 @@
 import mongoose, { Schema } from "mongoose";
 import { IProjectAccess } from "../types/index";
+
 const projectAccessSchema = new Schema({
   parentUser: {
     type: Schema.Types.ObjectId,
     ref: "User",
-    required: false
+    required: true
   },
   userInfo: [
     {
@@ -13,23 +14,24 @@ const projectAccessSchema = new Schema({
         ref: "User",
         required: true
       },
-      role: {
-        type: String,
-        required: true
-      },
-      projectID: {
-        type: Schema.Types.ObjectId,
-        ref: "Project",
-        required: true
-      },
       isApproved: {
         type: Boolean,
         required: true
       },
+      // Optional fields that can be updated later
+      role: {
+        type: String,
+        required: false
+      },
+      projectID: {
+        type: Schema.Types.ObjectId,
+        ref: "Project",
+        required: false
+      },
       permissions: {
         type: String,
         enum: ["Editor", "Viewer", "Maintainer"],
-        required: true
+        required: false
       }
     }
   ]
