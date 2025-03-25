@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { ChevronRight, Calendar, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
-import CreateProjectModal from '@/components/CreateProjectModal'
+import CreateProjectModal from '@/components/create-project-modal'
 
 interface Project {
   _id: string

@@ -1,17 +1,25 @@
-'use client'
-import Link from 'next/link'
-import { useState } from 'react'
-import axios from 'axios'
-import { Toaster, toast } from 'react-hot-toast'
-import { useRouter } from 'next/navigation'
-import { Eye, EyeOff } from 'lucide-react'
+"use client"
+
+import type React from "react"
+
+import Link from "next/link"
+import { useState } from "react"
+import axios from "axios"
+import { Toaster, toast } from "react-hot-toast"
+import { useRouter } from "next/navigation"
+import { Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
-    userName: '',
-    fullName: '',
-    email: '',
-    password: '',
+    userName: "",
+    fullName: "",
+    email: "",
+    password: "",
   })
   const router = useRouter()
 
@@ -27,18 +35,18 @@ export default function SignupPage() {
     setLoading(true)
 
     try {
-      const { data } = await axios.post('http://localhost:5000/api/auth/signup', formData, {
-        headers: { 'Content-Type': 'application/json' },
+      const { data } = await axios.post("http://localhost:5000/api/auth/signup", formData, {
+        headers: { "Content-Type": "application/json" },
       })
 
-      toast.success(data.message || 'Account created successfully!')
-      setFormData({ userName: '', fullName: '', email: '', password: '' }) // Reset form
-      router.push('/login')
+      toast.success(data.message || "Account created successfully!")
+      setFormData({ userName: "", fullName: "", email: "", password: "" }) // Reset form
+      router.push("/login")
     } catch (error: unknown) {
       if (axios.isAxiosError(error) && error.response) {
-        toast.error(error.response.data?.error || 'Signup failed')
+        toast.error(error.response.data?.error || "Signup failed")
       } else {
-        toast.error('Signup failed')
+        toast.error("Signup failed")
       }
     } finally {
       setLoading(false)
@@ -46,100 +54,107 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Toaster position="top-right" /> {/* Toast notifications */}
-      <div className="w-full max-w-md bg-card p-8 rounded-lg shadow-lg border border-border">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Create Account</h1>
-          <p className="text-muted-foreground">Get started with our platform</p>
-        </div>
+    <div className="min-h-screen bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark flex flex-col items-center justify-center p-4 transition-colors duration-300">
+      <Toaster position="top-right" />
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="userName" className="block text-sm font-medium text-foreground mb-2">
-              User Name
-            </label>
-            <input
-              type="text"
-              id="userName"
-              value={formData.userName}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-background text-foreground transition-all"
-              placeholder="JohnDoe"
-              required
-            />
-          </div>
+      <div className="absolute top-4 left-4 flex items-center space-x-4">
+        <Button variant="ghost" size="icon" asChild>
+          <Link href="/">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+        </Button>
+        <ThemeToggle />
+      </div>
 
-          <div>
-            <label htmlFor="fullName" className="block text-sm font-medium text-foreground mb-2">
-              Full Name
-            </label>
-            <input
-              type="text"
-              id="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-background text-foreground transition-all"
-              placeholder="John Doe"
-              required
-            />
-          </div>
+      <Card className="w-full max-w-md border-border bg-card dark:bg-card/80 shadow-xl">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-bold">Create Account</CardTitle>
+          <CardDescription>Get started with our platform</CardDescription>
+        </CardHeader>
 
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-background text-foreground transition-all"
-              placeholder="name@example.com"
-              required
-            />
-          </div>
-
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                value={formData.password}
+        <CardContent>
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <Label htmlFor="userName">Username</Label>
+              <Input
+                id="userName"
+                value={formData.userName}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-background text-foreground transition-all"
-                placeholder="••••••••"
+                placeholder="JohnDoe"
                 required
+                className="bg-background dark:bg-background-dark"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-              >
-                {showPassword ? <EyeOff /> : <Eye />}
-              </button>
             </div>
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition-colors"
-          >
-            {loading ? 'Creating Account...' : 'Create Account'}
-          </button>
+            <div className="space-y-2">
+              <Label htmlFor="fullName">Full Name</Label>
+              <Input
+                id="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                placeholder="John Doe"
+                required
+                className="bg-background dark:bg-background-dark"
+              />
+            </div>
 
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            Already have an account?{' '}
-            <Link href="/login" className="text-yellow-500 hover:text-yellow-600 font-semibold">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="name@example.com"
+                required
+                className="bg-background dark:bg-background-dark"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                  required
+                  className="bg-background dark:bg-background-dark"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full px-3"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              disabled={loading}
+            >
+              {loading ? "Creating Account..." : "Create Account"}
+            </Button>
+          </form>
+        </CardContent>
+
+        <CardFooter className="flex justify-center">
+          <p className="text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link href="/login" className="text-primary hover:underline font-medium">
               Sign in
             </Link>
           </p>
-        </form>
-      </div>
+        </CardFooter>
+      </Card>
     </div>
   )
 }
+

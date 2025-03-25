@@ -1,50 +1,46 @@
-// Navbar.tsx
-'use client'
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { ChevronDown, User, Menu } from 'lucide-react'
-import NotificationComponent from './NotificationComponent'
+"use client"
+import { useRouter } from "next/navigation"
+import { Menu } from "lucide-react"
+import NotificationComponent from "./notification-component"
+import { Button } from "@/components/ui/button"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 interface NavbarProps {
   toggleSidebar: () => void
 }
 
 export default function Navbar({ toggleSidebar }: NavbarProps) {
-  const [isProfileOpen, setIsProfileOpen] = useState(false)
   const router = useRouter()
 
   const handleLogout = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
+      const response = await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
       })
 
       if (response.ok) {
-        router.push('/login')
+        router.push("/login")
       } else {
-        throw new Error('Logout failed')
+        throw new Error("Logout failed")
       }
     } catch (error) {
-      console.error('Logout error:', error)
+      console.error("Logout error:", error)
       // You might want to show an error message to the user here
     }
   }
 
   return (
-    <nav className="bg-white shadow-md">
+    <nav className="bg-background dark:bg-background-dark border-b border-border transition-colors duration-300">
       <div className="max-w-8xl mx-auto px-8 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <button
-              onClick={toggleSidebar}
-              className="text-gray-800 p-2 rounded-md lg:hidden focus:outline-none focus:ring-2 focus:ring-yellow-400 mr-2"
-            >
+            <Button onClick={toggleSidebar} variant="ghost" size="icon" className="lg:hidden">
               <Menu className="h-6 w-6" />
-            </button>
+            </Button>
             <div className="flex-shrink-0">
-              <span className="text-2xl font-bold text-gray-800">Task Manager</span>
+              <span className="text-2xl font-bold text-primary">ProjectPro</span>
             </div>
           </div>
 
@@ -53,38 +49,29 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
             <NotificationComponent />
 
             {/* Profile Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setIsProfileOpen(!isProfileOpen)}
-                className="flex items-center text-gray-800 hover:text-yellow-600 focus:outline-none"
-              >
-                <User className="h-8 w-8 rounded-full bg-yellow-200 p-1" />
-                <ChevronDown className="ml-1 h-4 w-4" />
-              </button>
-
-              {isProfileOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-100">
-                  <a
-                    href="/dashboard/profile"
-                    className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  >
-                    Profile
-                  </a>
-                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Settings
-                  </a>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                  >
-                    Sign out
-                  </button>
-                </div>
-              )}
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src="/placeholder.svg?height=32&width=32" alt="User" />
+                    <AvatarFallback>JD</AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem asChild>
+                  <a href="/dashboard/profile">Profile</a>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <a href="/dashboard/settings">Settings</a>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>Sign out</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>
     </nav>
   )
 }
+

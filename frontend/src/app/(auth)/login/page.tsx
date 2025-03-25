@@ -1,152 +1,169 @@
-'use client'
-import Link from 'next/link'
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Eye, EyeOff } from 'lucide-react'
+"use client"
+
+import type React from "react"
+
+import Link from "next/link"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Eye, EyeOff, ArrowLeft } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 export default function LoginPage() {
   const router = useRouter()
-  const [error, setError] = useState('')
+  const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
   interface LoginFormElements extends HTMLFormControlsCollection {
-    email: HTMLInputElement;
-    password: HTMLInputElement;
+    email: HTMLInputElement
+    password: HTMLInputElement
   }
 
   interface LoginForm extends HTMLFormElement {
-    readonly elements: LoginFormElements;
+    readonly elements: LoginFormElements
   }
 
   const handleSubmit = async (e: React.FormEvent<LoginForm>) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
+    e.preventDefault()
+    setError("")
+    setIsLoading(true)
 
-    const email = e.currentTarget.elements.email.value;
-    const password = e.currentTarget.elements.password.value;
+    const email = e.currentTarget.elements.email.value
+    const password = e.currentTarget.elements.password.value
 
     try {
-      const response = await fetch('http://localhost:5000/api/auth/login', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-        credentials: 'include',
-      });
+        credentials: "include",
+      })
 
-      const data = await response.json();
+      const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        throw new Error(data.message || "Login failed")
       }
 
       // Redirect to dashboard or home page
-      router.push('/dashboard');
+      router.push("/dashboard")
     } catch (error) {
-      setError((error as Error).message);
+      setError((error as Error).message)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-card p-8 rounded-lg shadow-lg border border-border">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Welcome Back</h1>
-          <p className="text-muted-foreground">Please sign in to continue</p>
-        </div>
+    <div className="min-h-screen bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark flex flex-col items-center justify-center p-4 transition-colors duration-300">
+      <div className="absolute top-4 left-4 flex items-center space-x-4">
+        <Button variant="ghost" size="icon" asChild>
+          <Link href="/">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+        </Button>
+        <ThemeToggle />
+      </div>
 
-        {error && (
-          <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
-            {error}
-          </div>
-        )}
+      <Card className="w-full max-w-md border-border bg-card dark:bg-card/80 shadow-xl">
+        <CardHeader className="space-y-1 text-center">
+          <CardTitle className="text-3xl font-bold">Welcome Back</CardTitle>
+          <CardDescription>Please sign in to continue</CardDescription>
+        </CardHeader>
 
-        <form className="space-y-6" onSubmit={handleSubmit}>
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-background text-foreground transition-all"
-              placeholder="name@example.com"
-            />
-          </div>
+        <CardContent>
+          {error && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-foreground mb-2">
-              Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                id="password"
-                name="password"
+          <form className="space-y-6" onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="name@example.com"
                 required
-                className="w-full px-4 py-2 border border-border rounded-md focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500 bg-background text-foreground transition-all"
-                placeholder="••••••••"
+                className="bg-background dark:bg-background-dark"
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-                style={{ top: '50%', transform: 'translateY(-50%)' }}
-              >
-                {showPassword ? <EyeOff /> : <Eye />}
-              </button>
             </div>
-          </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isLoading ? 'Signing in...' : 'Sign In'}
-          </button>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link href="#" className="text-xs text-primary hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <Input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="••••••••"
+                  required
+                  className="bg-background dark:bg-background-dark"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-0 top-0 h-full px-3"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
 
-          {/* Rest of your social login buttons and signup link remain the same */}
+            <Button
+              type="submit"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              disabled={isLoading}
+            >
+              {isLoading ? "Signing in..." : "Sign In"}
+            </Button>
+          </form>
+
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-border"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-card text-muted-foreground">Or continue with</span>
+              <span className="px-2 bg-card dark:bg-card/80 text-muted-foreground">Or continue with</span>
             </div>
           </div>
 
-          <div className="flex gap-4">
-            <button
-              type="button"
-              className="w-full flex items-center justify-center gap-2 border border-border hover:border-yellow-500 text-foreground py-2 px-4 rounded-md transition-all"
-            >
-              {/* Google SVG remained the same */}
+          <div className="grid grid-cols-2 gap-4">
+            <Button variant="outline" className="w-full">
               Google
-            </button>
-            <button
-              type="button"
-              className="w-full flex items-center justify-center gap-2 border border-border hover:border-yellow-500 text-foreground py-2 px-4 rounded-md transition-all"
-            >
+            </Button>
+            <Button variant="outline" className="w-full">
               GitHub
-            </button>
+            </Button>
           </div>
+        </CardContent>
 
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            Don&apos;t have an account?{' '}
-            <Link href="/signup" className="text-yellow-500 hover:text-yellow-600 font-semibold">
+        <CardFooter className="flex justify-center">
+          <p className="text-sm text-muted-foreground">
+            Don&apos;t have an account?{" "}
+            <Link href="/signup" className="text-primary hover:underline font-medium">
               Sign up
             </Link>
           </p>
-        </form>
-      </div>
+        </CardFooter>
+      </Card>
     </div>
   )
 }
+
