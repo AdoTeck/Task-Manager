@@ -1,8 +1,22 @@
-import { useState } from 'react'
-import { useCreateTaskMutation } from '@/redux/slices/TaskSlice'
-import type { Task } from '@/types'
+"use client"
 
-// Changed prop from onTaskAdded to refetchTasks
+import { useState } from "react"
+import { useCreateTaskMutation } from "@/redux/slices/TaskSlice"
+import type { Task } from "@/types"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+
 interface AddTaskModalProps {
   isOpen: boolean
   onClose: () => void
@@ -11,12 +25,12 @@ interface AddTaskModalProps {
 }
 
 export default function AddTaskModal({ isOpen, onClose, projectId, refetchTasks }: AddTaskModalProps) {
-  const [newTask, setNewTask] = useState<Omit<Task, 'id'>>({
-    Title: '',
-    Description: '',
-    Status: 'Pending',
-    Deadline: '',
-    PriorityLevel: 'Medium',
+  const [newTask, setNewTask] = useState<Omit<Task, "id">>({
+    Title: "",
+    Description: "",
+    Status: "Pending",
+    Deadline: "",
+    PriorityLevel: "Medium",
     EstimateTime: 0,
   })
 
@@ -26,109 +40,117 @@ export default function AddTaskModal({ isOpen, onClose, projectId, refetchTasks 
     if (newTask.Title && newTask.Deadline) {
       try {
         const taskData = { ...newTask, EstimateTime: newTask.EstimateTime.toString() }
-        await createTask({ projectId, taskId: '', taskData }).unwrap()
+        await createTask({ projectId, taskId: "", taskData }).unwrap()
         setNewTask({
-          Title: '',
-          Description: '',
-          Status: 'Pending',
-          Deadline: '',
-          PriorityLevel: 'Medium',
+          Title: "",
+          Description: "",
+          Status: "Pending",
+          Deadline: "",
+          PriorityLevel: "Medium",
           EstimateTime: 0,
         })
         onClose()
         // Trigger refetch/reload after task addition.
         if (refetchTasks) {
-          refetchTasks();
+          refetchTasks()
         }
       } catch (error) {
-        console.error('Failed to create task:', error)
+        console.error("Failed to create task:", error)
       }
     }
   }
 
-  if (!isOpen) return null
-
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Add New Task</h2>
-
-        {/* Task Title */}
-        <label className="block mb-2 font-medium">Task Title</label>
-        <input
-          type="text"
-          placeholder="Enter task title"
-          className="w-full p-2 mb-4 border rounded"
-          value={newTask.Title}
-          onChange={e => setNewTask({ ...newTask, Title: e.target.value })}
-        />
-
-        {/* Task Description */}
-        <label className="block mb-2 font-medium">Task Description</label>
-        <textarea
-          placeholder="Enter task description"
-          className="w-full p-2 mb-4 border rounded"
-          value={newTask.Description}
-          onChange={e => setNewTask({ ...newTask, Description: e.target.value })}
-        />
-
-        {/* Task Status */}
-        <label className="block mb-2 font-medium">Task Status</label>
-        <select
-          className="w-full p-2 mb-4 border rounded"
-          value={newTask.Status}
-          onChange={e => setNewTask({ ...newTask, Status: e.target.value as 'Pending' | 'In Progress' | 'Completed' })}
-        >
-          <option value="Pending">Pending</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
-        </select>
-
-        {/* Task Deadline */}
-        <label className="block mb-2 font-medium">Deadline</label>
-        <input
-          type="datetime-local"
-          className="w-full p-2 mb-4 border rounded"
-          value={newTask.Deadline}
-          onChange={e => setNewTask({ ...newTask, Deadline: e.target.value })}
-        />
-
-        {/* Task Priority Level */}
-        <label className="block mb-2 font-medium">Priority Level</label>
-        <select
-          className="w-full p-2 mb-4 border rounded"
-          value={newTask.PriorityLevel}
-          onChange={e => setNewTask({ ...newTask, PriorityLevel: e.target.value as 'Low' | 'Medium' | 'High' })}
-        >
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-        </select>
-
-        {/* Task Estimate Time */}
-        <label className="block mb-2 font-medium">Estimate Time (in hours)</label>
-        <input
-          type="number"
-          placeholder="Enter estimate time"
-          className="w-full p-2 mb-4 border rounded"
-          value={newTask.EstimateTime}
-          onChange={e => setNewTask({ ...newTask, EstimateTime: parseInt(e.target.value) || 0 })}
-        />
-
-        {/* Buttons */}
-        <div className="flex justify-end space-x-2">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={isLoading}
-            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-          >
-            Add Task
-          </button>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Add New Task</DialogTitle>
+          <DialogDescription>Fill in the details to create a new task.</DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <Label htmlFor="title">Task Title</Label>
+            <Input
+              id="title"
+              value={newTask.Title}
+              onChange={(e) => setNewTask({ ...newTask, Title: e.target.value })}
+              placeholder="Enter task title"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="description">Task Description</Label>
+            <Textarea
+              id="description"
+              value={newTask.Description}
+              onChange={(e) => setNewTask({ ...newTask, Description: e.target.value })}
+              placeholder="Enter task description"
+              rows={4}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="status">Task Status</Label>
+            <Select
+              value={newTask.Status}
+              onValueChange={(value) =>
+                setNewTask({ ...newTask, Status: value as "Pending" | "In Progress" | "Completed" })
+              }
+            >
+              <SelectTrigger id="status">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="In Progress">In Progress</SelectItem>
+                <SelectItem value="Completed">Completed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="deadline">Deadline</Label>
+            <Input
+              id="deadline"
+              type="datetime-local"
+              value={newTask.Deadline}
+              onChange={(e) => setNewTask({ ...newTask, Deadline: e.target.value })}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="priority">Priority Level</Label>
+            <Select
+              value={newTask.PriorityLevel}
+              onValueChange={(value) => setNewTask({ ...newTask, PriorityLevel: value as "Low" | "Medium" | "High" })}
+            >
+              <SelectTrigger id="priority">
+                <SelectValue placeholder="Select priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Low">Low</SelectItem>
+                <SelectItem value="Medium">Medium</SelectItem>
+                <SelectItem value="High">High</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="estimate">Estimate Time (in hours)</Label>
+            <Input
+              id="estimate"
+              type="number"
+              value={newTask.EstimateTime}
+              onChange={(e) => setNewTask({ ...newTask, EstimateTime: Number.parseInt(e.target.value) || 0 })}
+              placeholder="Enter estimate time"
+            />
+          </div>
         </div>
-      </div>
-    </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} disabled={isLoading}>
+            {isLoading ? "Adding..." : "Add Task"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
+

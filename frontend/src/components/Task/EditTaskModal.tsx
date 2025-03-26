@@ -1,6 +1,21 @@
-import { useState, useEffect } from 'react'
-import { useUpdateTaskMutation } from '@/redux/slices/TaskSlice'
-import type { Task } from '@/types'
+"use client"
+
+import { useState, useEffect } from "react"
+import { useUpdateTaskMutation } from "@/redux/slices/TaskSlice"
+import type { Task } from "@/types"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 interface EditTaskModalProps {
   isOpen: boolean
@@ -10,13 +25,7 @@ interface EditTaskModalProps {
   onTaskUpdated?: () => void
 }
 
-export default function EditTaskModal({
-  isOpen,
-  onClose,
-  task,
-  projectId,
-  onTaskUpdated,
-}: EditTaskModalProps) {
+export default function EditTaskModal({ isOpen, onClose, task, projectId, onTaskUpdated }: EditTaskModalProps) {
   const [editedTask, setEditedTask] = useState(task)
   const [updateTask, { isLoading }] = useUpdateTaskMutation()
 
@@ -41,85 +50,99 @@ export default function EditTaskModal({
           onTaskUpdated()
         }
       } catch (error) {
-        console.error('Failed to update task:', error)
+        console.error("Failed to update task:", error)
       }
     }
   }
 
-  if (!isOpen || !editedTask) return null
+  if (!editedTask) return null
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Edit Task</h2>
-        {/* Task Title */}
-        <label className="block mb-2 font-medium">Task Title</label>
-        <input
-          type="text"
-          className="w-full p-2 mb-4 border rounded"
-          value={editedTask.Title}
-          onChange={e => setEditedTask({ ...editedTask, Title: e.target.value })}
-        />
-        {/* Task Description */}
-        <label className="block mb-2 font-medium">Task Description</label>
-        <textarea
-          className="w-full p-2 mb-4 border rounded"
-          value={editedTask.Description}
-          onChange={e => setEditedTask({ ...editedTask, Description: e.target.value })}
-        />
-        {/* Task Status */}
-        <label className="block mb-2 font-medium">Task Status</label>
-        <select
-          className="w-full p-2 mb-4 border rounded"
-          value={editedTask.Status}
-          onChange={e => setEditedTask({ ...editedTask, Status: e.target.value })}
-        >
-          <option value="Pending">Pending</option>
-          <option value="In Progress">In Progress</option>
-          <option value="Completed">Completed</option>
-        </select>
-        {/* Task Deadline */}
-        <label className="block mb-2 font-medium">Deadline</label>
-        <input
-          type="datetime-local"
-          className="w-full p-2 mb-4 border rounded"
-          value={editedTask.Deadline}
-          onChange={e => setEditedTask({ ...editedTask, Deadline: e.target.value })}
-        />
-        {/* Task Priority Level */}
-        <label className="block mb-2 font-medium">Priority Level</label>
-        <select
-          className="w-full p-2 mb-4 border rounded"
-          value={editedTask.PriorityLevel}
-          onChange={e => setEditedTask({ ...editedTask, PriorityLevel: e.target.value })}
-        >
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-        </select>
-        {/* Task Estimate Time */}
-        <label className="block mb-2 font-medium">Estimate Time (in hours)</label>
-        <input
-          type="number"
-          className="w-full p-2 mb-4 border rounded"
-          value={editedTask.EstimateTime}
-          onChange={e =>
-            setEditedTask({ ...editedTask, EstimateTime: parseInt(e.target.value) || 0 })
-          }
-        />
-        <div className="flex justify-end space-x-2">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={isLoading}
-            className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-          >
-            Update Task
-          </button>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Edit Task</DialogTitle>
+          <DialogDescription>Make changes to your task here.</DialogDescription>
+        </DialogHeader>
+        <div className="grid gap-4 py-4">
+          <div className="grid gap-2">
+            <Label htmlFor="title">Task Title</Label>
+            <Input
+              id="title"
+              value={editedTask.Title}
+              onChange={(e) => setEditedTask({ ...editedTask, Title: e.target.value })}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="description">Task Description</Label>
+            <Textarea
+              id="description"
+              value={editedTask.Description}
+              onChange={(e) => setEditedTask({ ...editedTask, Description: e.target.value })}
+              rows={4}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="status">Task Status</Label>
+            <Select
+              value={editedTask.Status}
+              onValueChange={(value) => setEditedTask({ ...editedTask, Status: value })}
+            >
+              <SelectTrigger id="status">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Pending">Pending</SelectItem>
+                <SelectItem value="In Progress">In Progress</SelectItem>
+                <SelectItem value="Completed">Completed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="deadline">Deadline</Label>
+            <Input
+              id="deadline"
+              type="datetime-local"
+              value={editedTask.Deadline}
+              onChange={(e) => setEditedTask({ ...editedTask, Deadline: e.target.value })}
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="priority">Priority Level</Label>
+            <Select
+              value={editedTask.PriorityLevel}
+              onValueChange={(value) => setEditedTask({ ...editedTask, PriorityLevel: value })}
+            >
+              <SelectTrigger id="priority">
+                <SelectValue placeholder="Select priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Low">Low</SelectItem>
+                <SelectItem value="Medium">Medium</SelectItem>
+                <SelectItem value="High">High</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="estimate">Estimate Time (in hours)</Label>
+            <Input
+              id="estimate"
+              type="number"
+              value={editedTask.EstimateTime}
+              onChange={(e) => setEditedTask({ ...editedTask, EstimateTime: Number.parseInt(e.target.value) || 0 })}
+            />
+          </div>
         </div>
-      </div>
-    </div>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} disabled={isLoading}>
+            {isLoading ? "Updating..." : "Update Task"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   )
 }
+

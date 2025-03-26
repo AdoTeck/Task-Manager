@@ -1,10 +1,12 @@
 "use client"
+
 import { useRouter } from "next/navigation"
-import { Menu } from "lucide-react"
-import NotificationComponent from "./notification-component"
+import { Menu, LogOut, User, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { ThemeToggle } from "@/components/theme-toggle"
+import NotificationComponent from "./notification-component"
 
 interface NavbarProps {
   toggleSidebar: () => void
@@ -45,10 +47,9 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
           </div>
 
           <div className="flex items-center space-x-4">
-            {/* Notification Dropdown */}
+            <ThemeToggle />
             <NotificationComponent />
 
-            {/* Profile Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
@@ -59,13 +60,18 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
-                  <a href="/dashboard/profile">Profile</a>
+                <DropdownMenuItem>
+                  <User className="mr-2 h-4 w-4" />
+                  Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <a href="/dashboard/settings">Settings</a>
+                <DropdownMenuItem>
+                  <Settings className="mr-2 h-4 w-4" />
+                  Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={handleLogout}>Sign out</DropdownMenuItem>
+                <DropdownMenuItem onClick={handleLogout}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign out
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
