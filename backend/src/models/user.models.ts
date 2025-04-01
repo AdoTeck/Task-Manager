@@ -40,6 +40,11 @@ const userSchema = new Schema<IUser>(
       type: Boolean,
       default: false,
     },
+    googleId: {
+      type: String,
+      sparse: true,
+      unique: true,
+    }
   },
   {
     timestamps: true,

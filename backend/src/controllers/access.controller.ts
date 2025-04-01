@@ -4,7 +4,7 @@ import { accessService , getNotificationService, updateNotificationService} from
 export const accessController = async (req: Request, res: Response) => {
     try {
         const userId = req.user!.id;
-        const accessprojects = await accessService(userId, req.body);
+        const accessprojects = await accessService(userId!, req.body);
         res.status(200).json({ message: "Access request sent successfully", accessprojects });
     } catch (error: any) {
         res.status(400).json({ error: error.message });
@@ -14,7 +14,7 @@ export const accessController = async (req: Request, res: Response) => {
 export const getNotifiastionController = async (req: Request, res: Response) => {
     try {
         const userId = req.user!.id;
-        const notificationData = await getNotificationService(userId);
+        const notificationData = await getNotificationService(userId!);
         res.status(200).json({ message: "Notification data fetched successfully", notificationData });
     } catch (error: any) {
         res.status(400).json({ error: error.message });
@@ -27,7 +27,10 @@ export const updateNotifiastionController = async (req: Request, res: Response) 
         // Extract notificationId from req.body and separate the update fields
         const { notificationId, ...updateData } = req.body;
         if (!notificationId) throw new Error("Notification ID is required");
-        const notificationData = await updateNotificationService(userId, notificationId, updateData);
+        if (typeof notificationId !== "string") {
+            throw new Error("Notification ID must be a string");
+        }
+        const notificationData = await updateNotificationService(userId!, notificationId, updateData);
         res.status(200).json({ message: "Notification data updated successfully", notificationData });
     } catch (error: any) {
         res.status(400).json({ error: error.message });

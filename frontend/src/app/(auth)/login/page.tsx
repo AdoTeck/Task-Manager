@@ -3,7 +3,7 @@
 import type React from "react"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Eye, EyeOff, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -13,11 +13,88 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { ThemeToggle } from "@/components/theme-toggle"
 
+// Google client ID from your environment variables
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""
+
 export default function LoginPage() {
   const router = useRouter()
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+
+  // Initialize Google API
+  useEffect(() => {
+    // Load the Google Identity Services script
+    const loadGoogleScript = () => {
+      const script = document.createElement('script')
+      script.src = 'https://accounts.google.com/gsi/client'
+      script.async = true
+      script.defer = true
+      document.body.appendChild(script)
+      
+      script.onload = initializeGoogleButton
+    }
+
+    // Initialize the Google button after script loads
+    const initializeGoogleButton = () => {
+      if (window.google && GOOGLE_CLIENT_ID) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleResponse
+        })
+        
+        window.google.accounts.id.renderButton(
+          document.getElementById('googleSignInDiv')!,
+          { theme: 'outline', size: 'large', width: '100%' }
+        )
+      }
+    }
+
+    loadGoogleScript()
+    
+    // Cleanup
+    return () => {
+      const script = document.querySelector('script[src="https://accounts.google.com/gsi/client"]')
+      if (script) {
+        document.body.removeChild(script)
+      }
+    }
+  }, [])
+
+  // Handle Google Sign-In response
+  interface GoogleResponse {
+    credential: string;
+  }
+
+  const handleGoogleResponse = async (response: GoogleResponse) => {
+    setError("")
+    setIsLoading(true)
+    
+    try {
+      // Send the ID token to the backend
+      const serverResponse = await fetch("http://localhost:5000/api/auth/google", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: response.credential }),
+        credentials: "include",
+      })
+
+      const data = await serverResponse.json()
+
+      if (!serverResponse.ok) {
+        throw new Error(data.message || "Google login failed")
+      }
+
+      // Redirect to dashboard after successful login
+      router.push("/dashboard")
+    } catch (error) {
+      setError((error as Error).message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   interface LoginFormElements extends HTMLFormControlsCollection {
     email: HTMLInputElement
@@ -144,13 +221,9 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <Button variant="outline" className="w-full">
-              Google
-            </Button>
-            <Button variant="outline" className="w-full">
-              GitHub
-            </Button>
+          <div className="grid grid-cols-1 gap-4">
+            {/* Google Sign-In button rendered by Google's SDK */}
+            <div id="googleSignInDiv" className="w-full"></div>
           </div>
         </CardContent>
 
@@ -167,3 +240,17 @@ export default function LoginPage() {
   )
 }
 
+// Add TypeScript declaration for Google Identity Services
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (config: { client_id: string; callback: (response: { credential: string }) => void }) => void;
+          renderButton: (element: HTMLElement, options: { theme: string; size: string; width?: string }) => void;
+          prompt: () => void;
+        };
+      };
+    };
+  }
+}

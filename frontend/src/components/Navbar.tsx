@@ -32,6 +32,9 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
       // You might want to show an error message to the user here
     }
   }
+  const handleprofile = () => {
+    router.push("/dashboard/profile")
+  }
 
   return (
     <nav className="bg-background dark:bg-background-dark border-b border-border transition-colors duration-300">
@@ -61,7 +64,9 @@ export default function Navbar({ toggleSidebar }: NavbarProps) {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
                 <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
+                  <User className="mr-2 h-4 w-4" 
+                  onClick={handleprofile}
+                  />
                   Profile
                 </DropdownMenuItem>
                 <DropdownMenuItem>

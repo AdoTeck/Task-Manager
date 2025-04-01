@@ -51,7 +51,14 @@ export const createProject = async (req: Request, res: Response): Promise<void> 
 
 export const getProject = async (req: Request, res: Response): Promise<void> => {
   try {
-    const userId = req.user!.id;
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(400).json({
+        success: false,
+        error: "User ID is missing"
+      });
+      return;
+    }
     const projects = await GetProject(userId); 
 
     res.status(200).json({
