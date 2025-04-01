@@ -1,7 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IUser } from "../types/index";
 
-
 const userSchema = new Schema<IUser>(
   {
     userName: {
@@ -27,20 +26,24 @@ const userSchema = new Schema<IUser>(
     },
     password: {
       type: String,
-      required: true,
       minlength: 8,
       maxlength: 128,
     },
-    refecode : {
+    refecode: {
       type: String,
       required: true,
       minlength: 6,
       maxlength: 6,
-    }
+      unique: true,
+    },
+    isGoogleUser: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
-  },
+  }
 );
 
 export const User = mongoose.model<IUser>("User", userSchema);

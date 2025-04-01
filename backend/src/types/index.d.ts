@@ -10,19 +10,19 @@ export interface IProject extends mongoose.Document {
   Category: string;
 }
 export interface ITodo extends mongoose.Document {
-    User: mongoose.Types.ObjectId;
-    Title: string;
-    Description: string;
-    Completed: boolean;
+  User: mongoose.Types.ObjectId;
+  Title: string;
+  Description: string;
+  Completed: boolean;
 }
 export interface ITask extends mongoose.Document {
   ProjectID: mongoose.Types.ObjectId;
   Title: string;
   Description: string;
-  Status: "Pending" | "In Progress" | "Completed"; 
+  Status: "Pending" | "In Progress" | "Completed";
   Deadline: Date;
-  PriorityLevel: "Low" | "Medium" | "High"; 
-  EstimateTime: number; 
+  PriorityLevel: "Low" | "Medium" | "High";
+  EstimateTime: number;
 }
 
 export interface IUser extends mongoose.Document {
@@ -30,7 +30,9 @@ export interface IUser extends mongoose.Document {
   fullName: string;
   email: string;
   password: string;
-  refecode : string;
+  refecode: string;
+  isGoogleUser: boolean;
+  googleId: string;
 }
 
 interface IUserInfo {
@@ -53,4 +55,14 @@ export interface IAccessRequest extends mongoose.Document {
   createdAt: Date;
   isApproved: boolean;
   isChecked: boolean;
+}
+
+export interface UserData extends mongoose.Document {
+  refecode: string;
+  userID: string;
+  permission?: string;
+  role?: string;
+  projectID?: string;
+  isApproved: boolean;
+  permissions?: "Editor" | "Viewer" | "Maintainer";
 }

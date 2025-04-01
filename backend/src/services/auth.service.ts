@@ -4,8 +4,8 @@ import { Projects } from "../models/projects.models";
 import bcrypt from "bcrypt";
 import { generateToken } from '../utils/jwt.utils';
 
-export const registerUser = async (userData: IUser) => {
-  const { userName, fullName, email, password } = userData;
+export const registerUser = async (userData: IUser, googleAuth = false) => {
+  const { userName, fullName, email, password, googleId } = userData;
 
   // Check if user already exists
   const existingUser = await User.findOne({ email });
@@ -13,33 +13,38 @@ export const registerUser = async (userData: IUser) => {
     throw new Error("User already exists with this email.");
   }
 
-  // Hash the password before saving
-  const hashedPassword = await bcrypt.hash(password, 10);
+  let hashedPassword = undefined;
+  if (!googleAuth && password) {
+    hashedPassword = await bcrypt.hash(password, 10);
+  }
 
   // Create and save user
   const newUser = new User({
     userName,
     fullName,
     email,
-    password: hashedPassword,
-    refecode : Math.random().toString(36).substring(2, 8)
+    password: hashedPassword, // Will be undefined if Google Sign-In
+    googleId: googleAuth ? googleId : undefined, // Only store Google ID if signing in with Google
+    refecode: Math.random().toString(36).substring(2, 8),
   });
 
   await newUser.save();
-  return { id: newUser._id, userName: newUser.userName, email: newUser.email, referenaceCode: newUser.refecode };
+  return { id: newUser._id, userName: newUser.userName, email: newUser.email, referenceCode: newUser.refecode };
 };
 
-export const loginUser = async (email: string, password: string) => {
+export const loginUser = async (email: string, password?: string, googleAuth = false, googleId?: string) => {
   // Check if user exists
   const user = await User.findOne({ email });
   if (!user) {
     throw new Error('Invalid credentials');
   }
-
-  // Verify password
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    throw new Error('Invalid credentials');
+  if (googleAuth) {
+    if (!user.googleId) throw new Error("User registered without Google, please log in with email/password.");
+    if (googleId !== user.googleId) throw new Error("Google authentication failed.");
+  } else {
+    if (!user.password || !password) throw new Error("Invalid credentials");
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) throw new Error("Invalid credentials");
   }
 
   // Generate JWT token
@@ -51,13 +56,14 @@ export const loginUser = async (email: string, password: string) => {
       id: user._id,
       email: user.email,
       userName: user.userName,
-      fullName: user.fullName
+      fullName: user.fullName,
+      googleAuth: !!user.googleId,
     }
   };
 };
 
 export const getUserProfileService = async (userId: string) => {
-  const user = await User.findById(userId).select("fullName email refecode");
+  const user = await User.findById(userId).select("fullName email refecode googleId");
   if (!user) {
     throw new Error("User not found");
   }

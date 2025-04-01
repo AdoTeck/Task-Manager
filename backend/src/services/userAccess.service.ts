@@ -3,21 +3,11 @@ import { ProjectAccess } from "../models/projectAccess.models";
 import { AccessRequest } from "../models/accessRequest.models";
 import { Projects } from "../models/projects.models";
 import { User } from "../models/user.models";
-
-interface UserData {
-  refecode: string;
-  userID: string;
-  permission?: string;
-  role?: string;
-  projectID?: string;
-  isApproved: boolean;
-  permissions?: "Editor" | "Viewer" | "Maintainer";
-}
+import type { UserData } from "../types/index";
 
 export const addUserService = async (parentId: string, userData: UserData) => {
   try {
     const { userID, isApproved, role = "Viewer", permissions = "Viewer", projectID } = userData;
-
     // Convert IDs safely
     const parentUserId = new Types.ObjectId(parentId);
     const userObjectId = new Types.ObjectId(userID);
@@ -63,7 +53,7 @@ export const addUserService = async (parentId: string, userData: UserData) => {
 
 export const getUserService = async (userId: string) => {
   const accessRequest = await AccessRequest.findOne({ ownerId: userId }).select("requesterId");
-  
+
   if (!accessRequest) {
     throw new Error("No access request found for the specified user");
   }
