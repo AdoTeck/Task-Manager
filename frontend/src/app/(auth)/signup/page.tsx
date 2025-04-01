@@ -3,7 +3,7 @@
 import type React from "react"
 
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import axios from "axios"
 import { Toaster, toast } from "react-hot-toast"
 import { useRouter } from "next/navigation"
@@ -13,6 +13,9 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { ThemeToggle } from "@/components/theme-toggle"
+
+// Google client ID from your environment variables
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
@@ -25,6 +28,77 @@ export default function SignupPage() {
 
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+
+  // Initialize Google API
+  useEffect(() => {
+    // Load the Google Identity Services script
+    const loadGoogleScript = () => {
+      const script = document.createElement('script')
+      script.src = 'https://accounts.google.com/gsi/client'
+      script.async = true
+      script.defer = true
+      document.body.appendChild(script)
+      
+      script.onload = initializeGoogleButton
+    }
+
+    // Initialize the Google button after script loads
+    const initializeGoogleButton = () => {
+      if (window.google && GOOGLE_CLIENT_ID) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleResponse
+        })
+        
+        window.google.accounts.id.renderButton(
+          document.getElementById('googleSignUpDiv')!,
+          { theme: 'outline', size: 'large', width: '100%' }
+        )
+      }
+    }
+
+    loadGoogleScript()
+    
+    // Cleanup
+    return () => {
+      const script = document.querySelector('script[src="https://accounts.google.com/gsi/client"]')
+      if (script) {
+        document.body.removeChild(script)
+      }
+    }
+  }, [])
+
+  // Handle Google Sign-Up response
+  const handleGoogleResponse = async (response: { credential: string }) => {
+    setLoading(true)
+    
+    try {
+      // Send the ID token to the backend
+      const serverResponse = await fetch("http://localhost:5000/api/auth/google", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ token: response.credential }),
+        credentials: "include",
+      })
+
+      const data = await serverResponse.json()
+
+      if (!serverResponse.ok) {
+        throw new Error(data.message || "Google signup failed")
+      }
+
+      toast.success("Account created successfully with Google!")
+      
+      // Redirect to dashboard after successful signup
+      router.push("/dashboard")
+    } catch (error) {
+      toast.error((error as Error).message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.id]: e.target.value })
@@ -143,6 +217,20 @@ export default function SignupPage() {
               {loading ? "Creating Account..." : "Create Account"}
             </Button>
           </form>
+
+          <div className="relative my-6">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-2 bg-card dark:bg-card/80 text-muted-foreground">Or continue with</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4">
+            {/* Google Sign-Up button rendered by Google's SDK */}
+            <div id="googleSignUpDiv" className="w-full"></div>
+          </div>
         </CardContent>
 
         <CardFooter className="flex justify-center">
@@ -158,3 +246,17 @@ export default function SignupPage() {
   )
 }
 
+// Add TypeScript declaration for Google Identity Services
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (config: { client_id: string; callback: (response: { credential: string }) => void }) => void;
+          renderButton: (element: HTMLElement, options: { theme: string; size: string; width?: string }) => void;
+          prompt: () => void;
+        };
+      };
+    };
+  }
+}

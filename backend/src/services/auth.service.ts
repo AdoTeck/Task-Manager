@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import { generateToken } from '../utils/jwt.utils';
 
 export const registerUser = async (userData: IUser, googleAuth = false) => {
-  const { userName, fullName, email, password, googleId } = userData;
+  const { userName, fullName, email, password, googleId, isGoogleUser } = userData;
 
   // Check if user already exists
   const existingUser = await User.findOne({ email });
@@ -25,6 +25,7 @@ export const registerUser = async (userData: IUser, googleAuth = false) => {
     email,
     password: hashedPassword, // Will be undefined if Google Sign-In
     googleId: googleAuth ? googleId : undefined, // Only store Google ID if signing in with Google
+    isGoogleUser: !!googleAuth,
     refecode: Math.random().toString(36).substring(2, 8),
   });
 
@@ -38,13 +39,25 @@ export const loginUser = async (email: string, password?: string, googleAuth = f
   if (!user) {
     throw new Error('Invalid credentials');
   }
+  
   if (googleAuth) {
-    if (!user.googleId) throw new Error("User registered without Google, please log in with email/password.");
-    if (googleId !== user.googleId) throw new Error("Google authentication failed.");
+    if (!user.isGoogleUser || !user.googleId) {
+      throw new Error("User registered without Google, please log in with email/password.");
+    }
+    if (googleId !== user.googleId) {
+      throw new Error("Google authentication failed.");
+    }
   } else {
-    if (!user.password || !password) throw new Error("Invalid credentials");
+    if (user.isGoogleUser) {
+      throw new Error("This account uses Google authentication. Please login with Google.");
+    }
+    if (!user.password || !password) {
+      throw new Error("Invalid credentials");
+    }
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) throw new Error("Invalid credentials");
+    if (!isPasswordValid) {
+      throw new Error("Invalid credentials");
+    }
   }
 
   // Generate JWT token
@@ -57,7 +70,7 @@ export const loginUser = async (email: string, password?: string, googleAuth = f
       email: user.email,
       userName: user.userName,
       fullName: user.fullName,
-      googleAuth: !!user.googleId,
+      isGoogleUser: user.isGoogleUser,
     }
   };
 };

@@ -1,12 +1,13 @@
 import { Request, Response } from "express";
 import { addUserService, getUserService } from "../services/userAccess.service";
 
-export const addUserController = async (req: Request, res: Response) => {
+export const addUserController = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = req.user?.id; // Might be missing for Google users
         const email = req.user?.email; // Always available
         if (!userId && !email) {
-            return res.status(400).json({ error: "User identification missing" });
+             res.status(400).json({ error: "User identification missing" });
+             return
         }
 
         const userData = await addUserService(userId || email!, req.body);
@@ -16,12 +17,13 @@ export const addUserController = async (req: Request, res: Response) => {
     }
 };
 
-export const getUserController = async (req: Request, res: Response) => {
+export const getUserController = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = req.user?.id;
         const email = req.user?.email;
         if (!userId && !email) {
-            return res.status(400).json({ error: "User identification missing" });
+             res.status(400).json({ error: "User identification missing" });
+             return
         }
         const userData = await getUserService(userId || email!);
         res.status(200).json({ message: "User data fetched successfully", userData });

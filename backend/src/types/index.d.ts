@@ -32,7 +32,7 @@ export interface IUser extends mongoose.Document {
   password: string;
   refecode: string;
   isGoogleUser: boolean;
-  googleId: string;
+  googleId?: string;
 }
 
 interface IUserInfo {
@@ -65,4 +65,17 @@ export interface UserData extends mongoose.Document {
   projectID?: string;
   isApproved: boolean;
   permissions?: "Editor" | "Viewer" | "Maintainer";
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      googleUser?: {
+        googleId: string;
+        email: string;
+        fullName: string;
+        picture?: string;
+      };
+    }
+  }
 }
